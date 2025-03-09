@@ -14,10 +14,10 @@
             <h1 class="text-xl font-bold">Vet<span class="text-emerald-800">Connect</span></h1>
             <nav class="hidden ml-auto md:flex">
                 <ul class="flex items-center gap-6 text-sm">
-                    <li><a class="text-gray-600 hover:text-gray-800" href="#">Home</a></li>
-                    <li><a class="text-gray-600 hover:text-gray-800" href="#">Doctor</a></li>
-                    <li><a class="text-gray-600 hover:text-gray-800" href="#">Service</a></li>
-                    <li><a class="text-gray-600 hover:text-gray-800" href="#">Article</a></li>
+                    <li><a class="text-gray-600 hover:text-gray-800" href="{{ route('home') }}">Home</a></li>
+                    <li><a class="text-gray-600 hover:text-gray-800" href="{{ route('booking') }}">Doctor</a></li>
+                    <li><a class="text-gray-600 hover:text-gray-800" href="{{ route('home') }}">Service</a></li>
+                    <li><a class="text-gray-600 hover:text-gray-800" href="{{ route('home') }}">Article</a></li>
                 </ul>
             </nav>
             <div class="flex items-center gap-4 ml-auto">
