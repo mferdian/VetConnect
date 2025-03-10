@@ -10,6 +10,12 @@ Route::get('/login', function () {
     return view('login');
 })->name('login');
 
+// Register Route
+Route::post('/register', [AuthController::class,'register']);
+Route::get('/register', function () {
+    return view('signup');
+})->name('signup');
+
 
 //Logout
 Route::get('/logout',[AuthController::class.'logout']);
@@ -18,6 +24,7 @@ Route::get('/logout',[AuthController::class.'logout']);
 Route::get('/', function () {
     return view('index');
 })->name('index');
+
 Route::get('/login', function () {
     return view('login');
 })->name('login');
