@@ -6,32 +6,30 @@
     <title>Home - VetConnect</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
+<body class="bg-gray-100">
 
     <!-- Navbar -->
-    <header class="bg-white shadow-md">
-        <div class="flex items-center h-16 max-w-screen-xl px-6 mx-auto">
-            <h1 class="text-xl font-bold">Vet<span class="text-emerald-800">Connect</span></h1>
-            <nav class="hidden ml-auto md:flex">
-                <ul class="flex items-center gap-6 text-sm">
-                    <li><a class="text-gray-600 hover:text-gray-800" href="{{ route('home') }}">Home</a></li>
-                    <li><a class="text-gray-600 hover:text-gray-800" href="{{ route('booking') }}">Doctor</a></li>
-                    <li><a class="text-gray-600 hover:text-gray-800" href="{{ route('home') }}">Service</a></li>
-                    <li><a class="text-gray-600 hover:text-gray-800" href="{{ route('home') }}">Article</a></li>
-                </ul>
-            </nav>
-            <div class="flex items-center gap-4 ml-auto">
-                <a class="px-4 py-2 text-sm font-medium text-white rounded-md bg-emerald-800 hover:bg-teal-700" href="{{ route('login') }}">Login</a>
-                <a class="hidden px-4 py-2 text-sm font-medium bg-gray-100 rounded-md text-emerald-800 hover:text-teal-600 md:block" href="{{ route('signup') }}">Sign Up</a>
-                <button class="p-2 bg-gray-100 rounded-md md:hidden">
-                    <span class="sr-only">Toggle menu</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        <nav class="py-4 bg-white shadow-md">
+            <div class="container flex flex-wrap items-center justify-between px-6 mx-auto">
+                <!-- Logo -->
+                <h1 class="text-2xl font-bold text-gray-700">Vet<span class="text-[#497D74]">Connect</span></h1>
+                <button type="button" class="p-2 ml-auto text-gray-500 rounded-md md:hidden hover:bg-gray-100 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
                     </svg>
                 </button>
+                <ul class="flex-col hidden w-full text-gray-600 md:flex md:flex-row md:w-auto md:space-x-6 md:items-center">
+                    <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="{{ route('index') }}">Home</a></li>
+                    <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="{{ route('booking') }}">Doctors</a></li>
+                    <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="#">Services</a></li>
+                    <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="{{ route('articlePage') }}">Articles</a></li>
+                </ul>
+                <div class="items-center hidden gap-4 md:flex">
+                    <a class="px-4 py-2 text-sm font-medium text-white transition-colors rounded-md bg-emerald-800 hover:bg-teal-700" href="{{ route('login') }}">Login</a>
+                    <a class="px-4 py-2 text-sm font-medium transition-colors bg-gray-100 rounded-md text-emerald-800 hover:text-teal-600 hover:bg-gray-200" href="{{ route('signup') }}">Sign Up</a>
+                </div>
             </div>
-        </div>
-    </header>
+        </nav>
     <!-- Navbar End -->
 
     <!-- Hero Section -->
@@ -49,7 +47,7 @@
                 </div>
             </div>
             <div class="flex justify-center lg:w-1/2">
-                <img src="{{ asset('images/cat.png') }}" alt="VetConnect" class="max-w-sm rounded-lg shadow-lg w-80 lg:w-full lg:max-w-lg">
+                <img src="{{ asset('images/cat.png')}}" alt="VetConnect" class="max-w-sm rounded-lg shadow-lg w-80 lg:w-full lg:max-w-lg">
             </div>
         </div>
     </section>

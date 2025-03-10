@@ -22,9 +22,11 @@
                         </p>
                     </div>
 
-                    <form action="#" method="POST" class="grid grid-cols-6 gap-6 mt-8">
+                    @if (session('failed'))
+                    <div class="alert alert-danger"></div>
+                    @endif
+                    <form action="/login" method="POST" class="grid grid-cols-6 gap-6 mt-8">
                         @csrf
-
                         <div class="col-span-6">
                             <label for="email" class="block mb-2 text-sm font-medium text-gray-700">Email</label>
                             <input
@@ -85,7 +87,7 @@
             <section class="relative flex items-end bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6">
                 <img
                     alt="VetConnect Image"
-                    src="{{ asset('images/bird.png') }}"
+                    src="{{ asset('images/bird.jpg') }}"
                     class="absolute inset-0 object-cover w-full h-full opacity-80"
                 />
                 <div class="hidden lg:relative lg:block lg:p-12">
