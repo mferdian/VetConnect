@@ -1,14 +1,37 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-       @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - VetConnect</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-100">
 
     <!-- Navbar -->
     @include('layouts._navbar')
+
+
+    <!-- Hero Section -->
+    <section class="py-32 bg-gray-100">
+        <div class="flex flex-col-reverse items-center max-w-screen-xl px-6 mx-auto lg:flex-row">
+            <div class="text-center lg:text-left lg:w-1/2">
+                <h1 class="text-3xl font-extrabold sm:text-5xl">
+                    Perawatan Hewan Lebih Mudah & Cepat!
+                    <span class="block text-emerald-800">VetConnect</span>
+                </h1>
+                <p class="mt-4 text-lg">Reservasi Dokter Hewan & Akses Informasi Kesehatan dalam Sekejap!</p>
+                <div class="flex flex-wrap justify-center gap-4 mt-8 lg:justify-start">
+                    <a class="px-6 py-3 text-sm font-medium text-white rounded-md bg-emerald-800 hover:bg-emerald-600" href="#">Get Started</a>
+                    <a class="px-6 py-3 text-sm font-medium bg-white border rounded-md text-emerald-800 border-emerald-800 hover:text-emerald-600" href="#">Learn More</a>
+                </div>
+            </div>
+            <div class="flex justify-center lg:w-1/2">
+                <img src="{{ asset('images/cat.png')}}" alt="VetConnect" class="max-w-sm rounded-lg shadow-lg w-80 lg:w-full lg:max-w-lg">
+            </div>
+        </div>
+    </section>
+    <!-- Hero Section End -->
 
     <!-- Hero Section -->
     <section class="container flex items-center px-6 mx-auto mt-12">
@@ -88,4 +111,5 @@
         </div>
     </section>
 
+</body>
 </html>
