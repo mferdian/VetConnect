@@ -4,37 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="flex items-center justify-center h-screen bg-gray-100">
-    <div class="p-8 bg-white rounded-lg shadow-lg w-96">
-        <h2 class="mb-6 text-2xl font-bold text-center">Login</h2>
-        <form action="{{ route('login') }}" method="POST">
-            @csrf <!-- CSRF token for security -->
-            <div class="mb-4">
-                <label class="block mb-2 text-sm font-bold text-gray-700" for="email">
-                    Email
-                </label>
-                <input class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="email" name="email" type="email" placeholder="Email" required>
-            </div>
-            <div class="mb-6">
-                <label class="block mb-2 text-sm font-bold text-gray-700" for="password">
-                    Password
-                </label>
-                <input class="w-full px-3 py-2 mb-3 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="password" name="password" type="password" placeholder="******************" required>
-            </div>
-            <div class="flex items-center justify-between">
-                <button class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline" type="submit">
-                    Sign In
+<body>
+     <div class="flex items-center justify-center min-h-screen p-4 bg-gray-100">
+        <div class="w-full max-w-md p-8 bg-white shadow-lg rounded-xl">
+            <h2 class="mb-6 text-2xl font-bold text-center text-gray-900">Login</h2>
+
+            @if (session('failed'))
+                <div class="px-4 py-3 mb-4 text-red-700 bg-red-100 border border-red-400 rounded">
+                    {{session('failed')}}
+                </div>
+            @endif
+
+            <form action="{{ route('login') }}" method="POST" class="space-y-4">
+                @csrf
+                <div>
+                    <label for="email" class="block mb-1 text-sm font-medium text-gray-700">Email</label>
+                    <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        class="w-full px-4 py-2 transition-all border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        placeholder="your@email.com"
+                        value="{{ old('email') }}"
+                    />
+                    @error('email')
+                        <small class="block mt-1 text-red-500">{{ $message }}</small>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="password" class="block mb-1 text-sm font-medium text-gray-700">Password</label>
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        class="w-full px-4 py-2 transition-all border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        placeholder="••••••••"
+                    />
+                    @error('password')
+                        <small class="block mt-1 text-red-500">{{ $message }}</small>
+                    @enderror
+                </div>
+
+                {{-- <div class="flex items-center justify-between p-3">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="remember" id="remember" class="border-gray-300 rounded text-emerald-600 focus:ring-emerald-500"/>
+                        <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                    </label>
+                    <a href="{{ route('password.request') }}" class="text-sm text-emerald-600 hover:text-emerald-500">Forgot password?</a>
+                </div> --}}
+
+                <button type="submit" class="w-full py-2.5 my-3 font-medium text-white transition-colors bg-emerald-600 rounded-lg hover:bg-emerald-700">
+                    Login
                 </button>
-                <a class="inline-block text-sm font-bold text-blue-500 align-baseline hover:text-blue-800" href="#">
+            </form>
+            <a class="inline-block pt-5 text-sm font-bold text-blue-500 align-baseline hover:text-blue-800" href="#">
                     Forgot Password?
-                </a>
+            </a>
+
+            <div class="mt-6 text-sm text-center text-gray-600 ">
+                Don't have an account?
+                <a href="{{ route('register') }}" class="font-medium text-emerald-600 hover:text-emerald-500">Register</a>
             </div>
-        </form>
-        <p class="mt-6 text-xs text-center text-gray-500">
-            Don't have an account? <a href="{{ route('register') }}" class="text-blue-500 hover:text-blue-800">Register here</a>.
-        </p>
+        </div>
     </div>
+
 </body>
 </html>

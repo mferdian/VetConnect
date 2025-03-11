@@ -26,7 +26,7 @@ class AuthController extends Controller
             return redirect('/');
         }
 
-        return back()->with('failed', 'Email or password is incorrect.');
+        return back()->with('failed','Email or Password Wrong');
     }
 
     public function showRegisterForm()
@@ -38,8 +38,15 @@ class AuthController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', 'min:8'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
+            'password' => [
+                'required',
+                'confirmed',
+                'min:8',
+            ],
+        ], [
+            'password.min' => 'Password harus memiliki minimal 8 karakter',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.'
         ]);
 
         $user = User::create([
@@ -48,9 +55,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
-        Auth::login($user);
-        return redirect('/login');
+        return redirect()->route('login')->with('success', 'Akun berhasil dibuat! Silakan login.');
     }
 
     public function logout()

@@ -6,13 +6,13 @@ use Illuminate\Http\Request;
 
 class BaseController extends Controller
 {
-    public function service()
+    public function home()
     {
-        return view('service');
+        return view('home');
     }
 
     public function booking()
     {
-        
+
     }
 }

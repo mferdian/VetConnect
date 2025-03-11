@@ -5,11 +5,11 @@ use App\Http\Controllers\BaseController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-// Public Routes (accessible to everyone)
 
-Route::get('/', [BaseController::class, 'service'])->name('service');
 
-// Authentication Routes (accessible only to guests)
+Route::get('/', [BaseController::class, 'home'])->name('home');
+
+
 Route::middleware('guest')->group(function () {
     // Login Routes
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -20,7 +20,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
 });
 
-// Authenticated Routes (accessible only to logged-in users)
+
 Route::middleware('auth')->group(function () {
     // Logout Route
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
