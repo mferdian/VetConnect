@@ -17,7 +17,6 @@
             </div>
         @endif
 
-
         <form action="{{ route('register') }}" method="POST" class="space-y-4">
             @csrf
             <div>
