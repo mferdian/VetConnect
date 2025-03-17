@@ -31,3 +31,11 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/', function () {
+    return view('home');
+})->name('home');
+
+Route::get('/articles', function () {
+    return view('articlePage');
+})->name('articles');
