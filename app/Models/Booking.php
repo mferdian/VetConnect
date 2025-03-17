@@ -28,10 +28,7 @@ class Booking extends Model
         return $this->belongsTo(User::class,'user_id');
     }
 
-    public function schedule():BelongsTo
-    {
-        return $this->belongsTo(Schedule::class,'schedule_id');
-    }
+
 
     public function reviews():HasMany
     {

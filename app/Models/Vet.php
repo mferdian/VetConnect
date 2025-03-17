@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,8 +10,7 @@ class Vet extends Model
 {
     use HasFactory;
 
-    protected $fillable =
-    [
+    protected $fillable = [
         'nama',
         'email',
         'no_telp',
@@ -23,18 +21,27 @@ class Vet extends Model
         'jenis_kelamin',
         'foto',
         'tgl_lahir',
-        'deskripsi'
+        'deskripsi',
+        'created_at',
+        'updated_at'
+    ];
+
+    protected $casts = [
+        'hewan' => 'array',
+        'tgl_lahir' => 'date'
     ];
 
 
-    public function schedules():HasMany
-    {
-        return $this->hasMany(Schedule::class);
-    }
-
-    public function articles():HasMany
+    public function articles(): HasMany
     {
         return $this->hasMany(Article::class);
     }
-
+    public function vetDates(): HasMany
+    {
+        return $this->hasMany(vetDate::class);
+    }
+    public function vetTimes(): HasMany
+    {
+        return $this->hasMany(vetTime::class);
+    }
 }

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->enum('jenis_kelamin',['laki-laki','perempuan']);
             $table->string('foto');
             $table->date('tgl_lahir');
-            $table->string('deskripsi');
+            $table->longText('deskripsi');
             $table->timestamps();
         });
     }

@@ -3,74 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Page</title>
+    <title>Profile</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
-        <h2 class="mb-6 text-2xl font-bold text-center">Profile</h2>
-
-        <!-- Display Success or Error Messages -->
-        @if (session('success'))
-            <div class="px-4 py-3 mb-4 text-green-700 bg-green-100 border border-green-400 rounded">
-                {{ session('success') }}
+<body class="bg-gray-100">
+    <div class="max-w-4xl p-6 mx-auto mt-10 bg-white rounded-lg shadow-md">
+        <!-- Profile Header -->
+        <div class="flex items-center space-x-4">
+            <img src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : asset('default-profile.png') }}"
+                 alt="Profile Photo" class="w-20 h-20 rounded-full">
+            <div>
+                <h2 class="text-xl font-bold">{{ Auth::user()->name }}</h2>
+                <p class="text-gray-600">{{ Auth::user()->email }}</p>
             </div>
-        @endif
-        @if (session('error'))
-            <div class="px-4 py-3 mb-4 text-red-700 bg-red-100 border border-red-400 rounded">
-                {{ session('error') }}
-            </div>
-        @endif
-
-        <!-- Profile Information -->
-        <div class="mb-6">
-            <p class="text-gray-700"><strong>Name:</strong> {{ Auth::user()->name }}</p>
-            <p class="text-gray-700"><strong>Email:</strong> {{ Auth::user()->email }}</p>
+            <a href="{{ route('profile.edit') }}" class="px-4 py-2 ml-auto text-white bg-blue-500 rounded hover:bg-blue-700">Edit</a>
         </div>
 
-        <!-- Edit Profile Form -->
-        <form action="{{ route('profile.update') }}" method="POST" class="mb-6">
-            @csrf
-            @method('PUT')
-            <div class="mb-4">
-                <label class="block mb-2 text-sm font-bold text-gray-700" for="name">Name</label>
-                <input class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="name" name="name" type="text" value="{{ Auth::user()->name }}" required>
+        <!-- Profile Details -->
+        <div class="grid grid-cols-2 gap-4 mt-6">
+            <div>
+                <p class="text-gray-500">Full Name</p>
+                <p class="font-semibold">{{ Auth::user()->name }}</p>
             </div>
-            <div class="mb-4">
-                <label class="block mb-2 text-sm font-bold text-gray-700" for="email">Email</label>
-                <input class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="email" name="email" type="email" value="{{ Auth::user()->email }}" required>
+            <div>
+                <p class="text-gray-500">No Telpon</p>
+                <p class="font-semibold">{{ Auth::user()->no_telp ?? '-' }}</p>
             </div>
-            <div class="mb-4">
-                <label class="block mb-2 text-sm font-bold text-gray-700" for="password">New Password (leave blank to keep current)</label>
-                <input class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="password" name="password" type="password">
+            <div>
+                <p class="text-gray-500">Umur</p>
+                <p class="font-semibold">{{ Auth::user()->umur ?? '-' }}</p>
             </div>
-            <div class="mb-6">
-                <label class="block mb-2 text-sm font-bold text-gray-700" for="password_confirmation">Confirm New Password</label>
-                <input class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="password_confirmation" name="password_confirmation" type="password">
-            </div>
-            <div class="flex items-center justify-between">
-                <button class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline" type="submit">
-                    Update Profile
-                </button>
-            </div>
-        </form>
+        </div>
 
-        <!-- Logout Button -->
-        <form action="{{ route('logout') }}" method="POST" class="mb-6">
-            @csrf
-            <button class="w-full px-4 py-2 font-bold text-white bg-red-500 rounded hover:bg-red-700 focus:outline-none focus:shadow-outline" type="submit">
-                Logout
-            </button>
-        </form>
-
-        <!-- Delete Account Button (Optional) -->
-        <form action="{{ route('profile.destroy') }}" method="POST" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
-            @csrf
-            @method('DELETE')
-            <button class="w-full px-4 py-2 font-bold text-white bg-gray-500 rounded hover:bg-gray-700 focus:outline-none focus:shadow-outline" type="submit">
-                Delete Account
-            </button>
-        </form>
+        {{-- <!-- Email List -->
+        <div class="mt-6">
+            <h3 class="font-semibold">My Email Address</h3>
+            <p class="mt-2 text-gray-600">{{ Auth::user()->email }}</p>
+            <p class="text-sm text-gray-400">1 month ago</p>
+            <button class="px-4 py-2 mt-2 text-blue-500 border border-blue-500 rounded hover:bg-blue-500 hover:text-white">+ Add Email Address</button>
+        </div> --}}
     </div>
 </body>
 </html>
