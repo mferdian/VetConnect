@@ -59,7 +59,7 @@
             <!-- Image and Card -->
             <div class="relative mt-10 lg:mt-0 lg:w-1/2">
                 <img src="{{ asset('images/Dr Beranda.png') }}" alt="Doctor" class="w-full max-w-md mx-auto rounded-lg">
-                <div class="absolute w-48 p-4 bg-white rounded-lg shadow-lg -bottom-10 lg:-bottom-20 lg:left-20">
+                <div class="absolute w-48 p-4 bg-white rounded-lg shadow-lg -bottom-10 lg:-bottom-20 lg:left-40">
                     <h4 class="font-semibold text-center text-gray-700">Available Doctors</h4>
                     <div class="mt-2 space-y-2">
                         <div class="flex items-center">
