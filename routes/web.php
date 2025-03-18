@@ -32,10 +32,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+// Route::get('/articles', function () {
 Route::get('/', function () {
     return view('home');
 })->name('home');
 
+//     return view('articlePage');
 Route::get('/articles', function () {
     return view('articlePage');
 })->name('articles');
