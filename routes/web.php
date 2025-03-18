@@ -42,3 +42,11 @@ Route::get('/', function () {
 Route::get('/articles', function () {
     return view('articlePage');
 })->name('articles');
+
+Route::get('/doctor', function () {
+    return view('doctorPage');
+})->name('doctor.page');
+
+Route::get('/booking', function () {
+    return view('bookingDetail');
+})->name('booking.detail');
