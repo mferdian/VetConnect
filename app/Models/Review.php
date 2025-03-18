@@ -10,21 +10,27 @@ class Review extends Model
 {
     use HasFactory;
 
-    protected $fillable =
-    [
-        'booking_id',
+    protected $fillable = [
         'user_id',
-        'review',
-        'rating'
+        'vet_id',
+        'booking_id',
+        'rating',
+        'review'
     ];
 
-    public function booking():BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Booking::class,'booking_id');
+        return $this->belongsTo(User::class);
     }
-    public function user():BelongsTo
+
+    public function vet(): BelongsTo
     {
-        return $this->belongsTo(User::class,'user_id');
+        return $this->belongsTo(Vet::class);
+    }
+
+    public function booking(): BelongsTo
+    {
+        return $this->belongsTo(Booking::class);
     }
 
 }

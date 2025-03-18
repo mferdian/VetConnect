@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\VetResource\Pages;
-use App\Filament\Resources\VetResource\RelationManagers;
 use App\Models\Vet;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -18,17 +17,12 @@ use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class VetResource extends Resource
 {
     protected static ?string $model = Vet::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-user-circle';
-
     protected static ?string $navigationLabel = 'Veterinarians';
-
     protected static ?string $modelLabel = 'Veterinarian';
 
     public static function form(Form $form): Form
@@ -37,19 +31,9 @@ class VetResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Personal Information')
                     ->schema([
-                        TextInput::make('nama')
-                            ->label('Nama')
-                            ->required()
-                            ->maxLength(255),
-                        TextInput::make('email')
-                            ->email()
-                            ->required()
-                            ->maxLength(255),
-                        TextInput::make('no_telp')
-                            ->label('Nomor Telpon')
-                            ->tel()
-                            ->required()
-                            ->maxLength(15),
+                        TextInput::make('nama')->label('Nama')->required()->maxLength(255),
+                        TextInput::make('email')->email()->required()->maxLength(255),
+                        TextInput::make('no_telp')->label('Nomor Telpon')->tel()->required()->maxLength(15),
                         Select::make('jenis_kelamin')
                             ->label('Gender')
                             ->options([
@@ -57,24 +41,14 @@ class VetResource extends Resource
                                 'perempuan' => 'Perempuan',
                             ])
                             ->required(),
-                        DatePicker::make('tgl_lahir')
-                            ->label('Tanggal Lahir')
-                            ->required(),
-                        Textarea::make('alamat')
-                            ->label('Alamat')
-                            ->required(),
+                        DatePicker::make('tgl_lahir')->label('Tanggal Lahir')->required(),
+                        Textarea::make('alamat')->label('Alamat')->required(),
                     ])->columns(2),
 
                 Forms\Components\Section::make('Professional Information')
                     ->schema([
-                        TextInput::make('STR')
-                            ->label('STR Number')
-                            ->required()
-                            ->maxLength(50),
-                        TextInput::make('SIP')
-                            ->label('SIP Number')
-                            ->required()
-                            ->maxLength(50),
+                        TextInput::make('STR')->label('STR Number')->required()->maxLength(50),
+                        TextInput::make('SIP')->label('SIP Number')->required()->maxLength(50),
                         Select::make('hewan')
                             ->multiple()
                             ->label('Spesialisasi')
@@ -87,35 +61,30 @@ class VetResource extends Resource
                             ])
                             ->searchable()
                             ->required(),
-                        Textarea::make('deskripsi')
-                            ->label('Deskripsi')
-                            ->minLength(2)
-                            ->maxLength(1024)
-                            ->required(),
+                        Textarea::make('deskripsi')->label('Deskripsi')->minLength(2)->maxLength(1024)->required(),
                     ]),
 
                 Forms\Components\Section::make('Profile Picture')
                     ->schema([
-                        FileUpload::make('foto')
-                            ->label('Profile Picture')
-                            ->image()
-                            ->maxSize(2048)
-                            ->required(),
+                        FileUpload::make('foto')->label('Profile Picture')->image()->maxSize(2048)->required(),
                     ]),
+
                 Forms\Components\Section::make('Schedule')
                     ->schema([
                         Forms\Components\Repeater::make('vetDates')
+                            ->label('Jadwal Praktik')
                             ->relationship('vetDates')
                             ->schema([
-                                DatePicker::make('tanggal')
-                                    ->native(false)
-                            ]),
-                        Forms\Components\Repeater::make('vetTimes')
-                            ->relationship('vetTimes')
-                            ->schema([
-                                TimePicker::make('jam'),
-                            ]),
-                    ])->columns(2),
+                                DatePicker::make('tanggal')->native(false)->required(),
+                                Forms\Components\Repeater::make('vetTimes')
+                                    ->label('Jam Praktik')
+                                    ->relationship('vetTimes')
+                                    ->schema([
+                                        TimePicker::make('jam')->required(),
+                                    ]),
+                            ])
+                            ->columns(2),
+                    ]),
             ]);
     }
 
@@ -123,28 +92,22 @@ class VetResource extends Resource
     {
         return $table
             ->columns([
-                ImageColumn::make('foto')
-                    ->label('Profile Picture')
-                    ->circular(),
-                TextColumn::make('nama')
-                    ->label('Full Name')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('email')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('STR')
-                    ->label('STR Number')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('SIP')
-                    ->label('SIP Number')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('jenis_kelamin')
-                    ->label('Gender')
-                    ->searchable()
-                    ->sortable(),
+                ImageColumn::make('foto')->label('Profile Picture')->circular(),
+                TextColumn::make('nama')->label('Full Name')->searchable()->sortable(),
+                TextColumn::make('email')->searchable()->sortable(),
+                TextColumn::make('STR')->label('STR Number')->searchable()->sortable(),
+                TextColumn::make('SIP')->label('SIP Number')->searchable()->sortable(),
+                TextColumn::make('jenis_kelamin')->label('Gender')->searchable()->sortable(),
+
+                // Menampilkan jadwal dokter di tabel
+                TextColumn::make('vetDates.tanggal')
+                    ->label('Jadwal Praktik'),
+
+                TextColumn::make('vetDates.vetTimes.jam')
+                    ->label('Jam Praktik')
+                    ->formatStateUsing(function ($record) {
+                        return $record->vetDates->flatMap->vetTimes->pluck('jam')->join(', ');
+                    }),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('jenis_kelamin')
@@ -167,9 +130,7 @@ class VetResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

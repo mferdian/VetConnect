@@ -10,14 +10,13 @@ class VetTime extends Model
 {
     use HasFactory;
 
-    protected $fillable =
-    [
-        'vet_id',
+    protected $fillable = [
+        'vet_date_id',
         'jam'
     ];
 
-    public function vet():BelongsTo
+    public function vetDate(): BelongsTo
     {
-        return $this->belongsTo(Vet::class,'vet_id');
+        return $this->belongsTo(VetDate::class);
     }
 }
