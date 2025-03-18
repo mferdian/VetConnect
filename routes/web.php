@@ -42,3 +42,25 @@ Route::get('/', function () {
 Route::get('/articles', function () {
     return view('articlePage');
 })->name('articles');
+
+Route::get('/doctor', function () {
+    return view('doctorPage');
+})->name('doctor.page');
+
+Route::get('/booking', function () {
+    return view('bookingDetail');
+})->name('booking.detail');
+
+//Route Untuk Update Booking
+Route::post('/update-booking', function (Request $request) {
+    // Simpan data booking ke database
+    $booking = Booking::create([
+        'doctor_id' => $request->doctor_id,
+        'user_id' => auth()->id(), // Ambil ID user yang login
+        'date' => $request->date,
+        'time' => $request->time,
+        'price' => 80000, // Sesuai harga di UI
+    ]);
+
+    return response()->json(['success' => true, 'message' => 'Booking berhasil!']);
+});

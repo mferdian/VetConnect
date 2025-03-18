@@ -56,7 +56,7 @@
    <!-- Detail Dokter & Biaya -->
    <aside class="w-64 p-4 bg-white rounded-lg shadow-md">
     <div class="flex items-center space-x-3">
-        <img src="{{ asset ('images/Gunawan.png')}}" alt="Dr. Usman Ademola" class="object-cover w-12 h-12 rounded-full">
+        <img src="images/Dr Beranda.png" alt="Dr. Usman Ademola" class="object-cover w-12 h-12 rounded-full">
         <div>
             <h3 class="text-sm font-bold text-gray-800">Dr. Usman Ademola</h3>
             <p class="text-xs text-gray-500">Vet</p>
@@ -84,11 +84,45 @@
         <span class="text-lg">Rp 80.000</span>
     </div>
 
+
+    
     <!-- Tombol Booking -->
     <button class="w-full mt-4 bg-[#497D74] text-white py-2 rounded-md font-semibold text-sm hover:bg-[#3a5f58]">
         Booking
     </button>
 </aside>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".time-slot").forEach((slot) => {
+            slot.addEventListener("click", function () {
+                let selectedTime = this.getAttribute("data-time");
+                let selectedDate = document.querySelector(".selected-date").innerText;
+
+                fetch("/update-booking", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        doctor_id: 1, // Ganti dengan ID dokter dari database
+                        date: selectedDate,
+                        time: selectedTime,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Booking berhasil!");
+                        location.reload(); // Refresh halaman untuk update UI
+                    }
+                });
+            });
+        });
+    });
+</script>
+
 
 </body>
 </html>
