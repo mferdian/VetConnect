@@ -19,12 +19,15 @@
             <div class="text-center lg:text-left lg:w-1/2" x-show="show" x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0">
                 <h1 class="text-4xl font-extrabold sm:text-5xl">
                     Perawatan Hewan Lebih Mudah & Cepat!
-                    <span class="block mt-2 text-emerald-800">VetConnect</span>
+                Booking Dokter di <br> <span class="text-black">Vet</span><span class="text-[#497D74]">Connect</span>
                 </h1>
                 <p class="mt-4 text-lg text-gray-600">Reservasi Dokter Hewan & Akses Informasi Kesehatan dalam Sekejap!</p>
                 <div class="flex flex-wrap justify-center gap-4 mt-8 lg:justify-start">
-                    <a class="px-6 py-3 text-sm font-medium text-white rounded-md bg-emerald-800 hover:bg-emerald-600" href="#">Get Started</a>
-                    <a class="px-6 py-3 text-sm font-medium bg-white border rounded-md text-emerald-800 border-emerald-800 hover:text-emerald-600" href="#">Learn More</a>
+                <a id="get-started-btn" href="#" class="px-6 py-3 text-sm font-medium text-white rounded-md bg-emerald-800 hover:bg-emerald-600 cursor-pointer">Get Started</a>
+                <section id="service" class="py-5 bg-white">
+                        <!-- Isi section service -->
+</section>
+
                 </div>
             </div>
             <!-- Image -->
@@ -33,9 +36,16 @@
             </div>
         </div>
     </section>
+    <script src="/script.js"></script>
+
+    <div class="h-20"></div>
+<section id="service" class="py-5 bg-gray-100"> 
+    <!-- Isi section service -->
+</section>
+
 
     <!-- Service Page -->
-    <section class="container px-6 mx-auto mt-20">
+    <section id="find-doctor" class="container px-6 mx-auto mt-20">
         <div class="flex flex-col items-center lg:flex-row lg:space-x-12">
             <!-- Text Content -->
             <div class="lg:w-1/2">
@@ -56,10 +66,30 @@
                 </ul>
                 <button class="mt-6 px-6 py-3 text-white bg-[#497D74] rounded-lg hover:bg-[#3b665d]">See the Doctors</button>
             </div>
+<!-- JavaScript untuk Scroll -->
+<script>
+document.getElementById("get-started-btn").addEventListener("click", function(event) {
+    event.preventDefault();
+
+    setTimeout(() => {
+        const target = document.getElementById("find-doctor");
+        const offset = target.getBoundingClientRect().top + window.scrollY - 20; // Sesuaikan offset jika perlu
+
+        window.scrollTo({
+            top: offset,
+            behavior: "smooth"
+        });
+    }, 100);
+});
+</script>
+
+
+</body>
+</html>
             <!-- Image and Card -->
             <div class="relative mt-10 lg:mt-0 lg:w-1/2">
                 <img src="{{ asset('images/Dr Beranda.png') }}" alt="Doctor" class="w-full max-w-md mx-auto rounded-lg">
-                <div class="absolute w-48 p-4 bg-white rounded-lg shadow-lg -bottom-10 lg:-bottom-20 lg:left-20">
+                <div class="absolute w-48 p-4 bg-white rounded-lg shadow-lg -bottom-100 lg:-bottom-0 lg:left-43 transform translate-x-0 translate-y-0">
                     <h4 class="font-semibold text-center text-gray-700">Available Doctors</h4>
                     <div class="mt-2 space-y-2">
                         <div class="flex items-center">
@@ -122,7 +152,7 @@
         <!-- Left: Information -->
         <div class="lg:w-1/2">
             <h3 class="text-4xl font-bold text-gray-800">
-                Booking Dokter di <span class="text-[#497D74]">VetConnect</span>
+            Booking Dokter di <span class="text-black">Vet</span><span class="text-[#497D74]">Connect</span>
             </h3>
             <p class="mt-4 text-gray-600">Layanan Telemedisin Hewan: Siap Siaga untuk Membantu Hewan Peliharaanmu Hidup Lebih Sehat.</p>
             <img src="{{ asset('images/Booking Dokter.png') }}" alt="Doctor Illustration" class="w-full max-w-xs mx-auto mt-6">
