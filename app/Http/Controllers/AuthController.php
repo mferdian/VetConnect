@@ -20,13 +20,20 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
+        ],[
+            'email.required' => 'Email wajib diisi!',
+            'email.email' => 'Masukkan email yang valid!',
+            'email.unique' => 'Email ini sudah terdaftar!',
+            'email.unique' => 'Email sudah terdaftar',
+            'password.min' => 'Password harus memiliki minimal 8 karakter',
+            'password.required' => 'Password wajib diisi!',
         ]);
 
         if (Auth::attempt($request->only('email', 'password'), $request->remember)) {
             return redirect('/');
         }
 
-        return back()->with('failed','Email or Password Wrong');
+        return back()->with('failed','Email atau Password Salah');
     }
 
     public function showRegisterForm()
@@ -36,23 +43,24 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
-            'password' => [
-                'required',
-                'confirmed',
-                'min:8',
-            ],
+            'password' => ['required', 'confirmed', 'min:8'],
         ], [
+            'name.required' => 'Nama harus diisi',
             'password.min' => 'Password harus memiliki minimal 8 karakter',
-            'password.confirmed' => 'Konfirmasi password tidak cocok.'
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'email.required' => 'Email wajib diisi',
+            'email.email' => 'Masukkan email yang valid!',
+            'email.unique' => 'Email sudah terdaftar',
+            'password.required' => 'Password wajib diisi!',
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+        User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
         ]);
 
         return redirect()->route('login')->with('success', 'Akun berhasil dibuat! Silakan login.');

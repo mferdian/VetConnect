@@ -22,8 +22,6 @@ class Vet extends Model
         'foto',
         'tgl_lahir',
         'deskripsi',
-        'created_at',
-        'updated_at'
     ];
 
     protected $casts = [
@@ -36,12 +34,19 @@ class Vet extends Model
     {
         return $this->hasMany(Article::class);
     }
+
     public function vetDates(): HasMany
     {
         return $this->hasMany(vetDate::class);
     }
+
     public function vetTimes(): HasMany
     {
         return $this->hasMany(vetTime::class);
+    }
+
+    public function vetReview(): HasMany
+    {
+        return $this->hasMany(Review::class);
     }
 }

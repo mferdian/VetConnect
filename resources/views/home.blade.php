@@ -19,11 +19,11 @@
             <div class="text-center lg:text-left lg:w-1/2" x-show="show" x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0">
                 <h1 class="text-4xl font-extrabold sm:text-5xl">
                     Perawatan Hewan Lebih Mudah & Cepat!
-                Booking Dokter di <br> <span class="text-black">Vet</span><span class="text-[#497D74]">Connect</span>
+                Booking Dokter di <br> <span class="text-black">Vet</span><span class="text-emerald-900">Connect</span>
                 </h1>
                 <p class="mt-4 text-lg text-gray-600">Reservasi Dokter Hewan & Akses Informasi Kesehatan dalam Sekejap!</p>
                 <div class="flex flex-wrap justify-center gap-4 mt-8 lg:justify-start">
-                <a id="get-started-btn" href="#" class="px-6 py-3 text-sm font-medium text-white rounded-md bg-emerald-800 hover:bg-emerald-600 cursor-pointer">Get Started</a>
+                <a id="get-started-btn" href="#" class="px-6 py-3 text-sm font-medium text-white rounded-md cursor-pointer bg-emerald-800 hover:bg-emerald-600">Get Started</a>
                 <section id="service" class="py-5 bg-white">
                         <!-- Isi section service -->
 </section>
@@ -39,7 +39,7 @@
     <script src="/script.js"></script>
 
     <div class="h-20"></div>
-<section id="service" class="py-5 bg-gray-100"> 
+<section id="service" class="py-5 bg-gray-100">
     <!-- Isi section service -->
 </section>
 
@@ -89,7 +89,7 @@ document.getElementById("get-started-btn").addEventListener("click", function(ev
             <!-- Image and Card -->
             <div class="relative mt-10 lg:mt-0 lg:w-1/2">
                 <img src="{{ asset('images/Dr Beranda.png') }}" alt="Doctor" class="w-full max-w-md mx-auto rounded-lg">
-                <div class="absolute w-48 p-4 bg-white rounded-lg shadow-lg -bottom-100 lg:-bottom-0 lg:left-43 transform translate-x-0 translate-y-0">
+                <div class="absolute w-48 p-4 transform translate-x-0 translate-y-0 bg-white rounded-lg shadow-lg -bottom-100 lg:-bottom-0 lg:left-43">
                     <h4 class="font-semibold text-center text-gray-700">Available Doctors</h4>
                     <div class="mt-2 space-y-2">
                         <div class="flex items-center">

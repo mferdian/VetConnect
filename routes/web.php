@@ -33,10 +33,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-// Route::get('/articles', function () {
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+
 
 //     return view('articlePage');
 Route::get('/articles', function () {

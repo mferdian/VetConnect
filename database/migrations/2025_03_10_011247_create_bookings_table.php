@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('schedule_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('vet_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('vet_date_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('vet_time_id')->constrained()->cascadeOnDelete();
             $table->string('keluhan');
             $table->unsignedBigInteger('total_harga');
             $table->enum('status',['confirmed','pending','canceled']);
