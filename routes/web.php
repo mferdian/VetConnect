@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BaseController;
+use App\Http\Controllers\NavBarController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,20 +34,9 @@ Route::middleware('auth')->group(function () {
 });
 
 
-// Route::get('/articles', function () {
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+Route::get('/detailArticle', [NavBarController::class,'detailArticle'])->name('detailArticle'); // Nanti Di pindah di atas
+Route::get('/booking', [NavBarController::class,'booking'])->name('booking.detail'); // Nanti Di pindah di atas
+Route::get('/', [NavBarController::class,'home'])->name('home');
+Route::get('/articles', [NavBarController::class,'article'])->name('articles');
+Route::get('/doctor', [NavBarController::class,'doctor'])->name('doctor.page');
 
-//     return view('articlePage');
-Route::get('/articles', function () {
-    return view('articlePage');
-})->name('articles');
-
-Route::get('/doctor', function () {
-    return view('doctorPage');
-})->name('doctor.page');
-
-Route::get('/booking', function () {
-    return view('bookingDetail');
-})->name('booking.detail');
