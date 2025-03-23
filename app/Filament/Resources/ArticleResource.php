@@ -16,8 +16,10 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 
 class ArticleResource extends Resource
@@ -32,18 +34,28 @@ class ArticleResource extends Resource
             ->schema([
                 Select::make('vet_id')
                     ->label('Author')
-                    ->options(Vet::all()->pluck('name', 'id'))
+                    ->options(Vet::all()->pluck('nama', 'id'))
                     ->searchable()
                     ->required(),
                 TextInput::make('judul')
                     ->label('Judul Artikel')
                     ->required()
                     ->maxLength(255),
-
                 Textarea::make('isi')
                     ->label('Isi Artikel')
                     ->required()
-                    ->rows(6)
+                    ->rows(6),
+                Repeater::make('gambar')
+                    ->schema([
+                        FileUpload::make('image')
+                            ->image()
+                            ->imageEditor()
+                            ->imageEditorAspectRatios([
+                                '16:9',
+                                '4:3',
+                                '1:1',
+                            ])
+                    ])
             ]);
     }
 
@@ -51,11 +63,25 @@ class ArticleResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('vet.name')
+                TextColumn::make('vet.nama')
                     ->label('Nama Vet')
                     ->sortable()
                     ->searchable(),
+                ImageColumn::make('gambar')
+                    ->label('Thumbnail')
+                    ->circular()
+                    ->size(40)
+                    ->state(function (Article $record): ?string {
 
+                        if (is_array($record->gambar) && count($record->gambar) > 0) {
+                            if (isset($record->gambar[0]['image'])) {
+                                return $record->gambar[0]['image'];
+                            }
+        
+                            return $record->gambar[0];
+                        }
+                        return null;
+                    }),
                 TextColumn::make('judul')
                     ->label('Judul')
                     ->sortable()

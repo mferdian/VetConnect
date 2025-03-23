@@ -13,7 +13,12 @@ class Article extends Model
     protected $fillable = [
         'vet_id',
         'judul',
-        'isi'
+        'isi',
+        'gambar'
+    ];
+    
+    protected $casts = [
+        'gambar' => 'array',
     ];
 
     public function vet():BelongsTo {
