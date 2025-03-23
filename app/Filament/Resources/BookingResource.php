@@ -48,13 +48,16 @@ class BookingResource extends Resource
                     ])->required(),
                 Forms\Components\Select::make('status_bayar')
                     ->options([
-                        'belum_bayar' => 'Belum Bayar',
-                        'lunas' => 'Lunas',
+                        'berhasil' => 'Berhasil',
+                        'gagal' => 'Gagal',
+                        'pending' => 'Pending',
                     ])->required(),
                 Forms\Components\Select::make('metode_pembayaran')
                     ->options([
+                        'transfer_bank' => 'Cash',
+                        'e-wallet' => 'e-wallet',
                         'cash' => 'Cash',
-                        'transfer' => 'Transfer',
+                        'lainnya' => 'Lainnya',
                     ]),
             ]);
     }
