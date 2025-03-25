@@ -64,7 +64,11 @@
                         <span class="text-[#497D74] mr-2">✔</span> Available 900+ doctor specialists.
                     </li>
                 </ul>
-                <button class="mt-6 px-6 py-3 text-white bg-[#497D74] rounded-lg hover:bg-[#3b665d]">See the Doctors</button>
+                <a href="{{ route('doctors') }}">
+    <button class="mt-6 px-6 py-3 text-white bg-[#497D74] rounded-lg hover:bg-[#3b665d]">
+        See the Doctors
+    </button></a>
+
             </div>
 <!-- JavaScript untuk Scroll -->
 <script>
@@ -107,7 +111,12 @@ document.getElementById("get-started-btn").addEventListener("click", function(ev
                             </div>
                         </div>
                     </div>
-                    <button class="w-full px-4 py-2 mt-4 text-sm text-white bg-[#497D74] rounded-md hover:bg-[#3b665d]">Find Doctor</button>
+                    <a href="{{ route('doctors') }}" class="w-full">
+    <button class="w-full px-4 py-2 mt-4 text-sm text-white bg-[#497D74] rounded-md hover:bg-[#3b665d]">
+        Find Doctor
+    </button>
+</a>
+
                 </div>
             </div>
         </div>

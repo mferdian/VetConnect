@@ -40,3 +40,14 @@ Route::get('/', [NavBarController::class,'home'])->name('home');
 Route::get('/articles', [NavBarController::class,'article'])->name('articles');
 Route::get('/doctor', [NavBarController::class,'doctor'])->name('doctor.page');
 
+Route::get('/history', function () {
+    return view('historyPage');
+})->name('history');
+
+Route::get('/doctors', function () {
+    return view('doctorPage');
+})->name('doctors');
+
+Route::get('/service', function () {
+    return view('downloadPage');
+})->name('service');
