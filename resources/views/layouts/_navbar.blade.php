@@ -15,7 +15,7 @@
         <ul class="flex-col hidden w-full text-gray-600 md:flex md:flex-row md:w-auto md:space-x-6 md:items-center">
             <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="{{ route('home') }}">Home</a></li>
             <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="{{ route('doctor.page') }}">Doctors</a></li>
-            <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="#">Services</a></li>
+            <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="{{ route('service') }}">Services</a></li>
             <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="{{ route('articles') }}">Articles</a></li>
         </ul>
 
@@ -51,6 +51,7 @@
                         <div class="w-48 py-2 bg-white rounded-md shadow-lg">
                             <a href="{{ route('profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Profile</a>
                             <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit Profile</a>
+                            <a href="{{ route('history') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My History</a>
                             <div class="border-t border-gray-100"></div>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
