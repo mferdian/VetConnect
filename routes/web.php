@@ -31,23 +31,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/detailArticle', [NavBarController::class,'detailArticle'])->name('detailArticle'); // Nanti Di pindah di atas
+    Route::get('/booking', [NavBarController::class,'booking'])->name('booking.detail'); // Nanti Di pindah di atas
 });
 
 
-Route::get('/detailArticle', [NavBarController::class,'detailArticle'])->name('detailArticle'); // Nanti Di pindah di atas
-Route::get('/booking', [NavBarController::class,'booking'])->name('booking.detail'); // Nanti Di pindah di atas
+
 Route::get('/', [NavBarController::class,'home'])->name('home');
 Route::get('/articles', [NavBarController::class,'article'])->name('articles');
-Route::get('/doctor', [NavBarController::class,'doctor'])->name('doctor.page');
+Route::get('/doctor', [NavBarController::class,'doctor'])->name('doctor');
+Route::get('/history', [NavBarController::class,'history']);
+Route::get('/aplication', [NavBarController::class,'aplication'])->name('aplication');
 
-Route::get('/history', function () {
-    return view('historyPage');
-})->name('history');
-
-Route::get('/doctors', function () {
-    return view('doctorPage');
-})->name('doctors');
-
-Route::get('/service', function () {
-    return view('downloadPage');
-})->name('service');
