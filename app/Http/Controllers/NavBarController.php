@@ -30,4 +30,14 @@ class NavBarController extends Controller
     {
         return view('detailArticle');
     }
+
+    public function history()
+    {
+        return view('historyPage');
+    }
+
+    public function aplication()
+    {
+        return view('downloadPage');
+    }
 }

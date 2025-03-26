@@ -14,8 +14,8 @@
 
         <ul class="flex-col hidden w-full text-gray-600 md:flex md:flex-row md:w-auto md:space-x-6 md:items-center">
             <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="{{ route('home') }}">Home</a></li>
-            <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="{{ route('doctor.page') }}">Doctors</a></li>
-            <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="{{ route('service') }}">Services</a></li>
+            <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="{{ route('doctor') }}">Doctors</a></li>
+            <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="{{ route('aplication') }}">Aplikasi</a></li>
             <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="{{ route('articles') }}">Articles</a></li>
         </ul>
 

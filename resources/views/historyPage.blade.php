@@ -9,20 +9,20 @@
 <body class="bg-gray-100">
 
     @include('layouts._navbar')
-    
+
     <!-- Payment History Section -->
     <div class="max-w-5xl mx-auto mt-6">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Payment History</h2>
+        <h2 class="mb-4 text-2xl font-semibold text-gray-800">Payment History</h2>
 
         <!-- Filter Buttons -->
-        <div class="flex space-x-4 mb-4">
-            <button class="px-6 py-2 border rounded-full text-gray-700 font-medium">All</button>
-            <button class="px-6 py-2 border rounded-full text-gray-700 font-medium">Complete</button>
-            <button class="px-6 py-2 border rounded-full text-gray-700 font-medium">Canceled</button>
+        <div class="flex mb-4 space-x-4">
+            <button class="px-6 py-2 font-medium text-gray-700 border rounded-full">All</button>
+            <button class="px-6 py-2 font-medium text-gray-700 border rounded-full">Complete</button>
+            <button class="px-6 py-2 font-medium text-gray-700 border rounded-full">Canceled</button>
         </div>
 
         <!-- Table -->
-        <div class="bg-white p-4 rounded-lg shadow">
+        <div class="p-4 bg-white rounded-lg shadow">
             <table class="w-full">
                 <thead>
                     <tr class="text-left text-gray-600 border-b">
@@ -37,50 +37,29 @@
                     <tr class="border-b">
                         <td class="py-2">Herjuna Taraka</td>
                         <td>Mar 1, 2023</td>
-                        <td>100</td>
+                        <td>Rp 300.000</td>
                         <td>08:00</td>
                         <td class="text-green-500">Success</td>
                     </tr>
                     <tr class="border-b">
                         <td class="py-2">Birra Soddaq</td>
                         <td>Jan 26, 2023</td>
-                        <td>300</td>
+                        <td>Rp 300.000</td>
                         <td>16:00</td>
                         <td class="text-green-500">Success</td>
                     </tr>
                     <tr class="border-b">
-                        <td class="py-2">#12436</td>
-                        <td>Feb 12, 2033</td>
-                        <td>100</td>
-                        <td>1</td>
-                        <td class="text-green-500">Success</td>
-                    </tr>
-                    <tr class="border-b">
-                        <td class="py-2">#16879</td>
-                        <td>Feb 12, 2033</td>
-                        <td>500</td>
-                        <td>5</td>
-                        <td class="text-green-500">Success</td>
-                    </tr>
-                    <tr class="border-b">
-                        <td class="py-2">#16378</td>
+                        <td class="py-2">Fikri Rizany</td>
                         <td>Feb 28, 2033</td>
-                        <td>500</td>
-                        <td>5</td>
+                        <td>Rp 500.000</td>
+                        <td>08:00</td>
                         <td class="text-red-500">Rejected</td>
                     </tr>
-                    <tr class="border-b">
-                        <td class="py-2">#16609</td>
-                        <td>March 13, 2033</td>
-                        <td>100</td>
-                        <td>1</td>
-                        <td class="text-green-500">Success</td>
-                    </tr>
                     <tr>
-                        <td class="py-2">#16907</td>
+                        <td class="py-2">Rifat Farhan</td>
                         <td>March 18, 2033</td>
-                        <td>100</td>
-                        <td>1</td>
+                        <td>Rp 100.000</td>
+                        <td>12:00</td>
                         <td class="text-blue-500">Pending</td>
                     </tr>
                 </tbody>
@@ -88,9 +67,9 @@
         </div>
 
         <!-- Pagination -->
-        <div class="mt-4 flex justify-between items-center text-gray-600">
+        <div class="flex items-center justify-between mt-4 text-gray-600">
             <span>
-                <select class="border p-2 rounded">
+                <select class="p-2 border rounded">
                     <option>10</option>
                     <option>20</option>
                     <option>50</option>
