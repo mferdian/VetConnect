@@ -18,7 +18,7 @@
             <div class="flex flex-col items-center overflow-hidden bg-white rounded-lg shadow-md md:flex-row">
                 <div class="p-6 md:w-3/5">
                     <h2 class="text-lg font-bold text-gray-800">Paus Beluga yang Diduga Mata-mata Rusia Ditemukan Mati di Norwegia</h2>
-                    <p class="mt-2 text-gray-600">Seekor paus beluga bernama Hvaldimir, yang diduga jadi mata-mata Rusia, ditemukan tewas. Bangkai paus tersebut ditemukan di perairan Norwegia akhir pekan lalu.....</p>
+                    <p class="mt-2 text-gray-600">Seekor paus belua bernama Hvaldimir, yang diduga jadi mata-mata Rusia, ditemukan tewas. Bangkai paus tersebut ditemukan di perairan Norwegia akhir pekan lalu.....</p>
                     <a href="{{ route('detailArticle')}}" class="mt-4 inline-block bg-[#497D74] text-white px-4 py-2 rounded-md hover:bg-[#3b665d]">Selengkapnya</a>
                 </div>
                 <img src="{{ asset('images/PausBeluga.png')}}" alt="Paus Beluga" class="object-cover w-full h-48 md:w-2/5">
