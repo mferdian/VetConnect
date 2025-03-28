@@ -21,10 +21,10 @@ class NavBarController extends Controller
         return view('doctorPage');
     }
 
-    public function booking()
-    {
-        return view('bookingDetail');
-    }
+    // public function booking()
+    // {
+    //     return view('bookingDetail');
+    // }
 
     public function detailArticle()
     {
