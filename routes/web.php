@@ -39,9 +39,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/detailArticle', [NavBarController::class,'detailArticle'])->name('detailArticle'); // Nanti Di pindah di atas
+    Route::get('/payment/{vet}', [PaymentController::class, 'show'])->name('payment.page');
+    Route::get('/booking/{id}', [BookingController::class, 'bookingDetail'])->name('booking.detail');
 });
 
 
+Route::get('/doctor', [VetController::class,'doctor'])->name('doctor');
 
 Route::get('/', [NavBarController::class,'home'])->name('home');
 Route::get('/articles', [NavBarController::class,'article'])->name('articles');
@@ -49,7 +52,4 @@ Route::get('/history', [NavBarController::class, 'history'])->name('history');
 Route::get('/aplication', [NavBarController::class,'aplication'])->name('aplication');
 
 
-Route::get('/doctor', [VetController::class,'doctor'])->name('doctor');
-Route::get('/payment/{vet}', [PaymentController::class, 'show'])->name('payment.page');
-Route::get('/booking/{id}', [BookingController::class, 'bookingDetail'])->name('booking.detail');
 

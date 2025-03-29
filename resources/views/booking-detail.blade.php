@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking Dokter - VetConnect</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -12,13 +12,13 @@
             --primary-hover: #3a645c;
         }
         .date-cell.selected {
-            background-color: #497D74;
+            background-color: var(--primary-color);
             color: white;
         }
         .time-slot.selected {
-            background-color: #497D74;
+            background-color: var(--primary-color);
             color: white;
-            border-color: #497D74;
+            border-color: var(--primary-color);
         }
     </style>
 </head>
@@ -54,11 +54,11 @@
 
                 <!-- Month Navigation -->
                 <div class="flex items-center justify-between mb-4">
-                    <button class="p-2 rounded-full hover:bg-gray-100">
+                    <button id="prev-month" class="p-2 rounded-full hover:bg-gray-100">
                         <i class="fas fa-chevron-left"></i>
                     </button>
-                    <h3 class="text-lg font-semibold">July 2023</h3>
-                    <button class="p-2 rounded-full hover:bg-gray-100">
+                    <h3 id="current-month" class="text-lg font-semibold">July 2023</h3>
+                    <button id="next-month" class="p-2 rounded-full hover:bg-gray-100">
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
@@ -87,9 +87,11 @@
                             $dayOfMonth = $date->tanggal->format('j');
                             $isToday = $date->tanggal->isToday();
                         @endphp
-                        <button class="date-cell h-12 rounded-lg flex flex-col items-center justify-center
+                        <button
+                            class="date-cell h-12 rounded-lg flex flex-col items-center justify-center
                                 {{ $isToday ? 'border-2 border-[#497D74]' : '' }}
-                                hover:bg-gray-100 transition-colors">
+                                hover:bg-gray-100 transition-colors"
+                            data-date="{{ $date->tanggal->format('Y-m-d') }}">
                             <span class="text-sm">{{ $date->tanggal->format('D') }}</span>
                             <span class="font-medium">{{ $dayOfMonth }}</span>
                         </button>
@@ -98,10 +100,12 @@
 
                 <!-- Time Slots -->
                 <h4 class="mb-3 font-semibold text-gray-800">Pilih Waktu</h4>
-                <div class="grid grid-cols-3 gap-3">
+                <div class="grid grid-cols-3 gap-3" id="time-slots-container">
                     @foreach ($vet->vetDates->first()->vetTimes as $time)
-                        <button class="time-slot py-2 px-4 border border-gray-300 rounded-lg text-center
-                                hover:border-[#497D74] hover:text-[#497D74] transition-colors">
+                        <button
+                            class="time-slot py-2 px-4 border border-gray-300 rounded-lg text-center
+                                hover:border-[#497D74] hover:text-[#497D74] transition-colors"
+                            data-time="{{ $time->jam }}">
                             {{ $time->jam }}
                         </button>
                     @endforeach
@@ -149,5 +153,56 @@
     </div>
     @endsection
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Date selection
+            const dateCells = document.querySelectorAll('.date-cell');
+            let selectedDate = null;
+
+            dateCells.forEach(cell => {
+                cell.addEventListener('click', function() {
+                    // Remove selected class from all date cells
+                    dateCells.forEach(c => c.classList.remove('selected'));
+
+                    // Add selected class to clicked cell
+                    this.classList.add('selected');
+                    selectedDate = this.getAttribute('data-date');
+
+                    // Here you could also fetch available times for the selected date
+                    // For now we'll just show a console log
+                    console.log('Selected date:', selectedDate);
+                });
+            });
+
+            // Time slot selection
+            const timeSlots = document.querySelectorAll('.time-slot');
+            let selectedTime = null;
+
+            timeSlots.forEach(slot => {
+                slot.addEventListener('click', function() {
+                    // Remove selected class from all time slots
+                    timeSlots.forEach(s => s.classList.remove('selected'));
+
+                    // Add selected class to clicked slot
+                    this.classList.add('selected');
+                    selectedTime = this.getAttribute('data-time');
+
+                    console.log('Selected time:', selectedTime);
+                });
+            });
+
+            // Month navigation (placeholder functionality)
+            document.getElementById('prev-month').addEventListener('click', function() {
+                console.log('Previous month clicked');
+                // Here you would implement logic to show previous month's dates
+            });
+
+            document.getElementById('next-month').addEventListener('click', function() {
+                console.log('Next month clicked');
+                // Here you would implement logic to show next month's dates
+            });
+        });
+    </script>
 </body>
 </html>
