@@ -22,6 +22,7 @@ class Vet extends Model
         'foto',
         'tgl_lahir',
         'deskripsi',
+        'harga',
     ];
 
     protected $casts = [
