@@ -9,7 +9,7 @@ class VetController extends Controller
 {
     public function doctor()
     {
-        $vets = Vet::all(); 
-        return view('doctorPage', compact('vets'));
+        $vets = Vet::all();
+        return view('doctor-page', compact('vets'));
     }
 }

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('vet_id')->constrained()->cascadeOnDelete();
             $table->foreignId('vet_date_id')->constrained()->cascadeOnDelete();
             $table->foreignId('vet_time_id')->constrained()->cascadeOnDelete();
-            $table->string('keluhan');
+            $table->string('keluhan')->nullable();
             $table->unsignedBigInteger('total_harga');
             $table->enum('status',['confirmed','pending','canceled']);
             $table->enum('status_bayar', ['berhasil','gagal','pending']);

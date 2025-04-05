@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('alamat');
             $table->string('STR');
             $table->string('SIP');
+            $table->unsignedBigInteger('harga');
             $table->json('hewan');
             $table->enum('jenis_kelamin',['laki-laki','perempuan']);
             $table->string('foto');

@@ -62,6 +62,9 @@ class VetResource extends Resource
                             ->searchable()
                             ->required(),
                         Textarea::make('deskripsi')->label('Deskripsi')->minLength(2)->maxLength(1024)->required(),
+                        TextInput::make('harga')
+                        ->prefix('Rp')
+                        ->required()
                     ]),
 
                 Forms\Components\Section::make('Profile Picture')

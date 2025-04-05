@@ -18,7 +18,7 @@ class NavBarController extends Controller
 
     public function doctor()
     {
-        return view('doctorPage');
+        return view('doctor-page');
     }
 
     // public function booking()
