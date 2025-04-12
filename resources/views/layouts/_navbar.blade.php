@@ -6,13 +6,14 @@
             Vet<span class="text-[#497D74]">Connect</span>
         </h1>
 
-        <button type="button" class="p-2 ml-auto text-gray-500 rounded-md md:hidden hover:bg-gray-100 focus:outline-none">
+        <button type="button" class="p-2 ml-auto text-gray-500 rounded-md md:hidden hover:bg-gray-100 focus:outline-none" id="menu-toggle">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
             </svg>
         </button>
 
-        <ul class="flex-col hidden w-full text-gray-600 md:flex md:flex-row md:w-auto md:space-x-6 md:items-center">
+        <!-- Menampilkan menu untuk desktop -->
+        <ul class="flex-col hidden w-full text-gray-600 md:flex md:flex-row md:w-auto md:space-x-6 md:items-center" id="menu">
             <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="{{ route('home') }}">Home</a></li>
             <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="{{ route('doctor') }}">Doctors</a></li>
             <li><a class="block py-2 text-gray-600 hover:text-gray-800" href="{{ route('aplication') }}">Aplikasi</a></li>
@@ -51,6 +52,7 @@
                         <div class="w-48 py-2 bg-white rounded-md shadow-lg">
                             <a href="{{ route('profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Profile</a>
                             <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit Profile</a>
+                            <a href="{{ route('myorder.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Orders</a>
                             <a href="{{ route('history') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My History</a>
                             <div class="border-t border-gray-100"></div>
                             <form method="POST" action="{{ route('logout') }}">
@@ -65,3 +67,11 @@
     </div>
 </nav>
 <!-- Navbar End -->
+
+<!-- Script untuk mobile responsive -->
+<script>
+    document.getElementById('menu-toggle').addEventListener('click', function () {
+        const menu = document.getElementById('menu');
+        menu.classList.toggle('hidden');
+    });
+</script>

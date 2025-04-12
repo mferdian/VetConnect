@@ -92,7 +92,7 @@
 </div>
 
 <!-- Success Modal -->
-<div id="success-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+<div id="success-modal" class="fixed inset-0 z-50 items-center justify-center hidden">
     <div class="fixed inset-0 bg-black opacity-50"></div>
     <div class="relative z-10 p-6 mx-4 bg-white rounded-lg shadow-lg w-80">
         <div class="flex flex-col items-center justify-center">
