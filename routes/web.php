@@ -9,11 +9,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
 
-// ==============================
-// PUBLIC ROUTES (Guest)
-// ==============================
-
-Route::get('/', [BaseController::class, 'home'])->name('home');
 
 Route::middleware('guest')->group(function () {
     // Auth Routes
@@ -45,10 +40,19 @@ Route::middleware('auth')->group(function () {
     // Time Slots (API)
     Route::get('/get-time-slots', [BookingController::class, 'getTimeSlots'])->name('booking.getTimeSlots');
     Route::get('/api/get-time-slots', [BookingController::class, 'getTimeSlots']); // bisa dihapus kalau fungsinya sama
+    Route::get('/booking/get-times/{vetDateId}', [BookingController::class, 'getTimes'])->name('booking.getTimeSlots');
+
 
     // Payment
     Route::get('/payment/{vet}', [PaymentController::class, 'show'])->name('payment.page');
     Route::post('/payment/confirm', [PaymentController::class, 'confirmPayment'])->name('payment.confirm');
+
+    // Detail Article
+    Route::get('/detailArticle', [NavBarController::class, 'detailArticle'])->name('detailArticle');
+
+    //Transaction
+    Route::get('/history', [NavBarController::class, 'history'])->name('history');
+    Route::get('/my-orders', [NavBarController::class, 'myorder'])->name('myorder.index');
 });
 
 // ==============================
@@ -57,6 +61,5 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/doctor', [VetController::class, 'doctor'])->name('doctor');
 Route::get('/articles', [NavBarController::class, 'article'])->name('articles');
-Route::get('/detailArticle', [NavBarController::class, 'detailArticle'])->name('detailArticle');
-Route::get('/history', [NavBarController::class, 'history'])->name('history');
 Route::get('/aplication', [NavBarController::class, 'aplication'])->name('aplication');
+Route::get('/', [BaseController::class, 'home'])->name('home');

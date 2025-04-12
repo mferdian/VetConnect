@@ -25,7 +25,7 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block mb-2 font-bold">Full Name</label>
+                    <label class="block mb-2 font-bold">Nama Lengkap</label>
                     <input type="text" name="name" value="{{ Auth::user()->name }}" class="w-full p-2 border rounded">
                 </div>
                 <div>
@@ -33,11 +33,11 @@
                     <input type="email" name="email" value="{{ Auth::user()->email }}" class="w-full p-2 border rounded">
                 </div>
                 <div>
-                    <label class="block mb-2 font-bold">Phone Number</label>
+                    <label class="block mb-2 font-bold">No HP</label>
                     <input type="text" name="no_telp" value="{{ Auth::user()->no_telp }}" class="w-full p-2 border rounded">
                 </div>
                 <div>
-                    <label class="block mb-2 font-bold">Age</label>
+                    <label class="block mb-2 font-bold">Umur</label>
                     <input type="text" name="umur" value="{{ Auth::user()->umur }}" class="w-full p-2 border rounded">
                 </div>
                 <div>
@@ -45,13 +45,13 @@
                     <input type="password" name="password" class="w-full p-2 border rounded">
                 </div>
                 <div>
-                    <label class="block mb-2 font-bold">Confirm New Password</label>
+                    <label class="block mb-2 font-bold">Confirmasi Password</label>
                     <input type="password" name="password_confirmation" class="w-full p-2 border rounded">
                 </div>
             </div>
 
             <div class="mt-6">
-                <button type="submit" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">Save Changes</button>
+                <button type="submit" class="px-4 py-2 text-white rounded bg-emerald-800 hover:bg-emerald-700">Save Changes</button>
                 <a href="{{ route('profile') }}" class="px-4 py-2 ml-4 text-gray-500 border border-gray-500 rounded hover:bg-gray-500 hover:text-white">Cancel</a>
             </div>
         </form>

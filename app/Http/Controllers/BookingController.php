@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Vet;
+use App\Models\VetDate;
 use Carbon\Carbon;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Http\Request;
@@ -106,6 +107,18 @@ class BookingController extends Controller
         return redirect()->route('payment.page', ['vet' => $request->vet_id]);
 
     }
+
+    public function getTimes($vetDateId)
+    {
+        $vetDate = VetDate::with('vetTimes')->find($vetDateId);
+
+        if (!$vetDate) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+
+        return response()->json($vetDate->vetTimes);
+    }
+
 
 
 

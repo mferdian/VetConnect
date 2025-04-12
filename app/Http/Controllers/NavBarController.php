@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NavBarController extends Controller
 {
@@ -21,10 +22,14 @@ class NavBarController extends Controller
         return view('doctor-page');
     }
 
-    // public function booking()
-    // {
-    //     return view('bookingDetail');
-    // }
+    public function myorder()
+    {
+        // Ambil pesanan yang terkait dengan pengguna yang sedang login
+        $bookings = Auth::user()->bookings;
+
+        // Kirim data ke view
+        return view('my-order', compact('bookings'));
+    }
 
     public function detailArticle()
     {

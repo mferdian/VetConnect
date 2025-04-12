@@ -1,83 +1,73 @@
+/**
+ * VetConnect - Booking Detail Page
+ * Handles date and time selection for veterinarian appointments
+ */
+
 document.addEventListener('DOMContentLoaded', function () {
-    const dateCells = document.querySelectorAll('.date-cell');
-    const timeSlotsContainer = document.getElementById('time-slots-container');
-    const currentMonthElement = document.getElementById('current-month');
-    const bookingButton = document.getElementById('booking-button');
-    const selectedDateEl = document.getElementById('selected-date');
-    const selectedTimeEl = document.getElementById('selected-time');
+    const dateSelect = document.getElementById('vet_date_id');
+    const timeSelect = document.getElementById('vet_time_id');
 
-    const inputVetDateId = document.getElementById('input-vet-date-id');
-    const inputVetTimeId = document.getElementById('input-vet-time-id');
-    const inputKeluhan = document.getElementById('input-keluhan');
-    const keluhanTextarea = document.getElementById('keluhan');
-
-    let selectedDate = null;
-    let selectedTime = null;
-    const vetId = bookingButton.dataset.vetId;
-
-    function updateBookingButtonState() {
-        bookingButton.classList.toggle('disabled', !(selectedDate && selectedTime));
+    // Initialize time slots if value exists on page load
+    if (dateSelect && dateSelect.value) {
+        loadTimeSlots(dateSelect.value);
     }
 
-    function formatDateToIndo(dateStr) {
-        const date = new Date(dateStr);
-        return date.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    // Event listener untuk perubahan tanggal
+    if (dateSelect) {
+        dateSelect.addEventListener('change', function () {
+            loadTimeSlots(this.value);
+        });
     }
 
-    function fetchTimeSlots(date) {
-        fetch(`/get-time-slots?date=${date}&vet_id=${vetId}`)
-            .then(response => response.json())
-            .then(data => {
-                timeSlotsContainer.innerHTML = '';
-                inputVetDateId.value = data.vet_date_id || '';
-
-                if (data.times.length === 0) {
-                    timeSlotsContainer.innerHTML = '<p class="col-span-4 py-3 text-center text-gray-500">Tidak ada jadwal tersedia pada tanggal ini</p>';
-                    return;
+    /**
+     * Fetch available time slots based on selected date ID
+     * @param {string} dateId
+     */
+    function loadTimeSlots(dateId) {
+        fetch(`/booking/get-times/${dateId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Gagal mengambil data waktu konsultasi');
                 }
-
-                data.times.forEach(time => {
-                    const button = document.createElement('button');
-                    button.className = 'time-slot';
-                    button.setAttribute('data-time', time.jam);
-                    button.setAttribute('data-id', time.id);
-                    button.textContent = time.jam;
-
-                    button.addEventListener('click', function () {
-                        document.querySelectorAll('.time-slot').forEach(btn => btn.classList.remove('selected'));
-                        this.classList.add('selected');
-                        selectedTime = time.jam;
-                        selectedTimeEl.textContent = time.jam;
-                        inputVetTimeId.value = time.id;
-                        updateBookingButtonState();
-                    });
-
-                    timeSlotsContainer.appendChild(button);
-                });
+                return response.json();
             })
-            .catch(() => {
-                timeSlotsContainer.innerHTML = '<p class="col-span-4 py-3 text-center text-red-500">Terjadi kesalahan. Silakan coba lagi.</p>';
+            .then(data => {
+                updateTimeOptions(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                updateTimeOptions([]);
             });
     }
 
-    // Date click handler
-    dateCells.forEach(cell => {
-        cell.addEventListener('click', function () {
-            dateCells.forEach(c => c.classList.remove('selected'));
-            this.classList.add('selected');
+    /**
+     * Update dropdown waktu berdasarkan data dari API
+     * @param {Array} timeSlots
+     */
+    function updateTimeOptions(timeSlots) {
+        timeSelect.innerHTML = '';
 
-            selectedDate = this.getAttribute('data-date');
-            selectedDateEl.textContent = formatDateToIndo(selectedDate);
-            selectedTime = null;
-            selectedTimeEl.textContent = 'Belum dipilih';
-            inputVetTimeId.value = '';
-            fetchTimeSlots(selectedDate);
-            updateBookingButtonState();
-        });
-    });
+        if (!timeSlots || timeSlots.length === 0) {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'Tidak ada waktu tersedia';
+            option.disabled = true;
+            option.selected = true;
+            timeSelect.appendChild(option);
+        } else {
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Pilih waktu konsultasi';
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            timeSelect.appendChild(defaultOption);
 
-    // Set current month
-    const currentDate = new Date();
-    currentMonthElement.textContent = currentDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
-
+            timeSlots.forEach(time => {
+                const option = document.createElement('option');
+                option.value = time.id;
+                option.textContent = time.jam;
+                timeSelect.appendChild(option);
+            });
+        }
+    }
 });
