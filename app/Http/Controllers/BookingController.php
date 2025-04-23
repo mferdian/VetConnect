@@ -186,4 +186,16 @@ class BookingController extends Controller
 
         return redirect()->route('home')->with('success', 'Review berhasil dikirim!');
     }
+
+    public function history()
+    {
+        // Ambil data riwayat transaksi dari model Booking
+        $paymentHistory = Booking::where('user_id', Auth::id())
+            ->where('status_bayar', '!=', null)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Kirim data ke view
+        return view('historyPage', compact('paymentHistory'));
+    }
 }
