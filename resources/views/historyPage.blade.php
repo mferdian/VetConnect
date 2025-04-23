@@ -34,34 +34,29 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="border-b">
-                        <td class="py-2">Herjuna Taraka</td>
-                        <td>Mar 1, 2023</td>
-                        <td>Rp 300.000</td>
-                        <td>08:00</td>
-                        <td class="text-green-500">Success</td>
-                    </tr>
-                    <tr class="border-b">
-                        <td class="py-2">Birra Soddaq</td>
-                        <td>Jan 26, 2023</td>
-                        <td>Rp 300.000</td>
-                        <td>16:00</td>
-                        <td class="text-green-500">Success</td>
-                    </tr>
-                    <tr class="border-b">
-                        <td class="py-2">Fikri Rizany</td>
-                        <td>Feb 28, 2033</td>
-                        <td>Rp 500.000</td>
-                        <td>08:00</td>
-                        <td class="text-red-500">Rejected</td>
-                    </tr>
-                    <tr>
-                        <td class="py-2">Rifat Farhan</td>
-                        <td>March 18, 2033</td>
-                        <td>Rp 100.000</td>
-                        <td>12:00</td>
-                        <td class="text-blue-500">Pending</td>
-                    </tr>
+                    @forelse ($paymentHistory as $transaction)
+                        <tr class="border-b">
+                            <td class="py-2">{{ $transaction->vet->nama ?? '-' }}</td> {{-- Nama Dokter (asumsi ada relasi ke model Vet) --}}
+                            <td>{{ $transaction->vetDate->tanggal ?? '-' }}</td>
+                            <td>Rp {{ number_format($transaction->total_harga, 0, ',', '.') }}</td> {{-- Total Harga --}}
+                            <td>{{ $transaction->vetTime->jam_mulai ?? '-' }} - {{ $transaction->vetTime->jam_selesai ?? '-' }}</td>
+                            <td>
+                                @if ($transaction->status_bayar === 'berhasil')
+                                    <span class="text-green-500">Success</span>
+                                @elseif ($transaction->status_bayar === 'pending')
+                                    <span class="text-blue-500">Pending</span>
+                                @elseif ($transaction->status_bayar === 'gagal' || $transaction->status_bayar === 'canceled')
+                                    <span class="text-red-500">{{ ucfirst($transaction->status_bayar) }}</span>
+                                @else
+                                    {{ ucfirst($transaction->status_bayar) ?? '-' }}
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td class="py-2 text-center" colspan="5">Tidak ada riwayat transaksi.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

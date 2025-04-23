@@ -33,4 +33,12 @@ class Review extends Model
         return $this->belongsTo(Booking::class);
     }
 
+    public function getStarRatingHtml()
+    {
+        $stars = '';
+        for ($i = 1; $i <= 5; $i++) {
+            $stars .= $i <= $this->rating ? '★' : '☆';
+        }
+        return $stars;
+    }
 }

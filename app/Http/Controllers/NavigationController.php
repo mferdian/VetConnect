@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Review as ModelsReview;
 use App\Models\Vet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,7 +11,14 @@ class NavigationController extends Controller
 {
     public function home()
     {
-        return view('home');
+
+        $reviews = ModelsReview::with(['user', 'vet'])
+        ->orderBy('rating', 'desc')
+        ->orderBy('created_at', 'desc')
+        ->take(3)
+        ->get();
+
+        return view('home', compact('reviews'));
     }
 
     public function article()
