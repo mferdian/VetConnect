@@ -23,7 +23,7 @@
                     <h1 class="text-2xl font-bold text-gray-800">Dr. {{ $vet->nama }}</h1>
                     <p class="text-gray-600">{{ $vet->spesialisasi ?? 'Dokter Hewan' }}</p>
                 </div>
-                
+
             </div>
 
             {{-- Form Booking --}}
@@ -37,7 +37,7 @@
 
                     <div class="mb-6">
                         <label for="vet_date_id" class="block mb-2 font-medium text-gray-700">Pilih Tanggal Konsultasi</label>
-                        <select name="vet_date_id" id="vet_date_id" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-600 focus:border-teal-600">
+                        <select name="vet_date_id" id="vet_date_id" class="w-full px-4 py-2 text-black border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-600 focus:border-teal-600">
                             @foreach ($vet->vetDates as $date)
                                 <option value="{{ $date->id }}">{{ $date->tanggal->translatedFormat('l, d F Y') }}</option>
                             @endforeach
@@ -64,10 +64,6 @@
                 {{-- Harga --}}
                 <input type="hidden" name="harga" value="{{ $vet->harga + 5000 }}">
                 <div class="text-center">
-                    <div class="inline-block px-4 py-2 mb-4 font-medium text-teal-800 bg-teal-100 rounded-full">
-                        Total Biaya: Rp {{ number_format($vet->harga + 5000, 0, ',', '.') }}
-                    </div>
-
                     <button type="submit" class="w-full px-4 py-3 font-medium text-white transition duration-200 bg-teal-700 rounded-md hover:bg-teal-800">
                         <i class="mr-2 fas fa-calendar-check"></i> Konfirmasi Janji Temu
                     </button>

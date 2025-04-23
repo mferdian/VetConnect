@@ -20,11 +20,10 @@ return new class extends Migration
             $table->string('STR');
             $table->string('SIP');
             $table->unsignedBigInteger('harga');
-            $table->json('hewan');
-            $table->enum('jenis_kelamin',['laki-laki','perempuan']);
+            $table->boolean('jenis_kelamin');
             $table->string('foto');
             $table->date('tgl_lahir');
-            $table->longText('deskripsi');
+            $table->text('deskripsi');
             $table->timestamps();
         });
     }

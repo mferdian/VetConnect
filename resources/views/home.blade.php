@@ -260,14 +260,15 @@
         </div>
     </div>
 
+
     <!-- Footer -->
-    <footer class="py-10 mt-20 bg-gray-100" x-data="{ show: false }" x-init="setTimeout(() => show = true, 500)">
+    <footer class="py-10 mt-20 bg-emerald-800" x-data="{ show: false }" x-init="setTimeout(() => show = true, 500)">
         <div class="container flex flex-col px-6 mx-auto space-y-6 md:flex-row md:space-y-0 md:space-x-12" x-show="show" x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0 translate-y-10" x-transition:enter-end="opacity-100 translate-y-0">
             <!-- Left: Info -->
             <div class="md:w-1/2">
-                <h3 class="text-xl font-bold text-gray-800">Vet<span class="text-[#497D74]">Connect</span></h3>
-                <p class="mt-2 text-gray-600">Want to consult a vet? Just book online at <span class="font-bold">VetConnect</span>!</p>
-                <div class="mt-4 space-y-2 text-sm text-gray-600">
+                <h3 class="text-xl font-bold text-white">Vet<span class="text-white">Connect</span></h3>
+                <p class="mt-2 text-white">Want to consult a vet? Just book online at <span class="font-bold">VetConnect</span>!</p>
+                <div class="mt-4 space-y-2 text-sm text-white">
                     <p>📍 Location: Jl. Kesehatan No.10, Jakarta</p>
                     <p>📧 Email: support@vetconnect.com</p>
                     <p>📞 WhatsApp: +62 812-3456-7890</p>
@@ -276,8 +277,8 @@
 
             <!-- Right: Partner Form -->
             <div class="md:w-1/2">
-                <h4 class="text-lg font-bold text-gray-800">🔗 Want to be our partner? 🎁🐾</h4>
-                <p class="mt-2 text-sm text-gray-600">Join us and be part of the best animal health service! Enter your email, and we will send you a form.</p>
+                <h4 class="text-lg font-bold text-white">🔗 Want to be our partner? 🎁🐾</h4>
+                <p class="mt-2 text-sm text-white">Join us and be part of the best animal health service! Enter your email, and we will send you a form.</p>
                 <div class="flex mt-4">
                     <input type="email" placeholder="Enter Your E-mail" class="w-full px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none">
                     <button class="px-6 py-2 text-white bg-[#497D74] rounded-r-md hover:bg-[#3b665d]">Join</button>

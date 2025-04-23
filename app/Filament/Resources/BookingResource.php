@@ -43,9 +43,9 @@ class BookingResource extends Resource
                 Forms\Components\Select::make('status')
                     ->options([
                         'pending' => 'Pending',
-                        'completed' => 'Completed',
+                        'confirmed' => 'Confirmed', 
                         'canceled' => 'Canceled',
-                    ])->required(),
+                    ]),
                 Forms\Components\Select::make('status_bayar')
                     ->options([
                         'berhasil' => 'Berhasil',
