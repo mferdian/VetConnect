@@ -12,7 +12,8 @@ class VetTime extends Model
 
     protected $fillable = [
         'vet_date_id',
-        'jam'
+        'jam_mulai',
+        'jam_selesai',
     ];
 
     public function vetDate(): BelongsTo

@@ -1,73 +1,41 @@
-/**
- * VetConnect - Booking Detail Page
- * Handles date and time selection for veterinarian appointments
- */
 
 document.addEventListener('DOMContentLoaded', function () {
-    const dateSelect = document.getElementById('vet_date_id');
-    const timeSelect = document.getElementById('vet_time_id');
+    const vetDateSelect = document.getElementById('vet_date_id');
+    const vetTimeSelect = document.getElementById('vet_time_id');
 
-    // Initialize time slots if value exists on page load
-    if (dateSelect && dateSelect.value) {
-        loadTimeSlots(dateSelect.value);
-    }
+    vetDateSelect.addEventListener('change', function () {
+        const dateId = this.value;
+        if (dateId) {
+            // Clear previous options
+            vetTimeSelect.innerHTML = '<option value="">Memuat waktu...</option>';
 
-    // Event listener untuk perubahan tanggal
-    if (dateSelect) {
-        dateSelect.addEventListener('change', function () {
-            loadTimeSlots(this.value);
-        });
-    }
+            // Gunakan URL yang sesuai dengan route Laravel Anda
+            fetch(`/booking/get-times/${dateId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Clear the current options
+                    vetTimeSelect.innerHTML = '<option value="">Pilih Jam Konsultasi</option>';
 
-    /**
-     * Fetch available time slots based on selected date ID
-     * @param {string} dateId
-     */
-    function loadTimeSlots(dateId) {
-        fetch(`/booking/get-times/${dateId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Gagal mengambil data waktu konsultasi');
-                }
-                return response.json();
-            })
-            .then(data => {
-                updateTimeOptions(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                updateTimeOptions([]);
-            });
-    }
-
-    /**
-     * Update dropdown waktu berdasarkan data dari API
-     * @param {Array} timeSlots
-     */
-    function updateTimeOptions(timeSlots) {
-        timeSelect.innerHTML = '';
-
-        if (!timeSlots || timeSlots.length === 0) {
-            const option = document.createElement('option');
-            option.value = '';
-            option.textContent = 'Tidak ada waktu tersedia';
-            option.disabled = true;
-            option.selected = true;
-            timeSelect.appendChild(option);
+                    // Add new options based on the fetched data
+                    data.forEach(time => {
+                        const option = document.createElement('option');
+                        option.value = time.id;
+                        option.textContent = `${time.jam_mulai} - ${time.jam_selesai}`;
+                        vetTimeSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching vet times:', error);
+                    vetTimeSelect.innerHTML = '<option value="">Gagal memuat waktu</option>';
+                });
         } else {
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = 'Pilih waktu konsultasi';
-            defaultOption.disabled = true;
-            defaultOption.selected = true;
-            timeSelect.appendChild(defaultOption);
-
-            timeSlots.forEach(time => {
-                const option = document.createElement('option');
-                option.value = time.id;
-                option.textContent = time.jam;
-                timeSelect.appendChild(option);
-            });
+            // If no date is selected, reset the vet time select
+            vetTimeSelect.innerHTML = '<option value="">Pilih tanggal terlebih dahulu</option>';
         }
+    });
+
+    // Tambahkan ini untuk mengisi waktu secara otomatis saat halaman dimuat
+    if (vetDateSelect.value) {
+        vetDateSelect.dispatchEvent(new Event('change'));
     }
 });

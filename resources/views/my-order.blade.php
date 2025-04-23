@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VetConnect - My-Order</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="bg-gray-100">
-
     @extends('layouts.app')
+
+    @section('title', 'VetConnect - My-Order')
 
     @section('content')
     <div class="max-w-4xl px-4 py-10 mx-auto">
@@ -37,13 +29,17 @@
 
                         <div class="text-right">
                             <span class="inline-block px-3 py-1 mb-2 text-sm font-medium text-white rounded-full
-                                {{ $booking->status === 'berhasil' ? 'bg-green-500' : 'bg-yellow-400' }}">
+                                {{ $booking->status === 'confirmed' ? 'bg-green-500' : 'bg-yellow-400' }}">
                                 {{ ucfirst($booking->status) }}
                             </span>
-                            {{-- Optional: Lihat detail
-                            <a href="{{ route('booking.show', $booking->id) }}" class="text-sm text-[#497D74] hover:underline">
-                                Lihat Detail
-                            </a> --}}
+
+                            @if( $booking->status === 'confirmed' && !$booking->review)
+                                <a href="{{ route('review.create', $booking->id) }}" class="text-sm text-[#497D74] hover:underline">
+                                    Beri Review
+                                </a>
+                            @elseif($booking->review)
+                                <p class="text-xs text-gray-500">Sudah direview</p>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -52,6 +48,3 @@
         @endif
     </div>
     @endsection
-
-</body>
-</html>

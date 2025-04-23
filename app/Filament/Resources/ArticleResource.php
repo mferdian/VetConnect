@@ -3,30 +3,24 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ArticleResource\Pages;
-use App\Filament\Resources\ArticleResource\RelationManagers;
 use App\Models\Article;
-use App\Models\User;
-use App\Models\Vet;
 use Filament\Forms;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
 
 class ArticleResource extends Resource
 {
     protected static ?string $model = Article::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
+    protected static ?string $navigationLabel = 'Articles';
 
     public static function form(Form $form): Form
     {
@@ -34,28 +28,24 @@ class ArticleResource extends Resource
             ->schema([
                 Select::make('vet_id')
                     ->label('Author')
-                    ->options(Vet::all()->pluck('nama', 'id'))
+                    ->relationship('vet', 'nama')
                     ->searchable()
                     ->required(),
                 TextInput::make('judul')
                     ->label('Judul Artikel')
                     ->required()
                     ->maxLength(255),
-                Textarea::make('isi')
+                RichEditor::make('isi')
                     ->label('Isi Artikel')
                     ->required()
-                    ->rows(6),
-                Repeater::make('gambar')
-                    ->schema([
-                        FileUpload::make('image')
-                            ->image()
-                            ->imageEditor()
-                            ->imageEditorAspectRatios([
-                                '16:9',
-                                '4:3',
-                                '1:1',
-                            ])
-                    ])
+                    ->columnSpanFull(),
+                FileUpload::make('gambar')
+                    ->label('Thumbnail')
+                    ->image()
+                    ->imageEditor()
+                    ->imageEditorAspectRatios([
+                        '16:9', '4:3', '1:1',
+                    ]),
             ]);
     }
 
@@ -63,30 +53,19 @@ class ArticleResource extends Resource
     {
         return $table
             ->columns([
+                ImageColumn::make('gambar')
+                    ->label('Thumbnail')
+                    ->circular()
+                    ->size(40),
                 TextColumn::make('vet.nama')
                     ->label('Nama Vet')
                     ->sortable()
                     ->searchable(),
-                ImageColumn::make('gambar')
-                    ->label('Thumbnail')
-                    ->circular()
-                    ->size(40)
-                    ->state(function (Article $record): ?string {
-
-                        if (is_array($record->gambar) && count($record->gambar) > 0) {
-                            if (isset($record->gambar[0]['image'])) {
-                                return $record->gambar[0]['image'];
-                            }
-        
-                            return $record->gambar[0];
-                        }
-                        return null;
-                    }),
                 TextColumn::make('judul')
                     ->label('Judul')
                     ->sortable()
                     ->searchable()
-                    ->limit(50)
+                    ->limit(50),
             ])
             ->filters([
                 //
@@ -103,9 +82,7 @@ class ArticleResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

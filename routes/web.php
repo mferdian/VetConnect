@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BaseController;
-use App\Http\Controllers\NavBarController;
+use App\Http\Controllers\NavigationController;
 use App\Http\Controllers\VetController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
@@ -39,27 +39,34 @@ Route::middleware('auth')->group(function () {
 
     // Time Slots (API)
     Route::get('/get-time-slots', [BookingController::class, 'getTimeSlots'])->name('booking.getTimeSlots');
-    Route::get('/api/get-time-slots', [BookingController::class, 'getTimeSlots']); // bisa dihapus kalau fungsinya sama
+    Route::get('/api/get-time-slots', [BookingController::class, 'getTimeSlots']); 
     Route::get('/booking/get-times/{vetDateId}', [BookingController::class, 'getTimes'])->name('booking.getTimeSlots');
 
 
     // Payment
-    Route::get('/payment/{vet}', [PaymentController::class, 'show'])->name('payment.page');
-    Route::post('/payment/confirm', [PaymentController::class, 'confirmPayment'])->name('payment.confirm');
+    Route::get('/payment/{vet}', [BookingController::class, 'show'])->name('payment.page');
+    Route::post('/payment/confirm', [BookingController::class, 'confirmPayment'])->name('payment.confirm');
 
     // Detail Article
-    Route::get('/detailArticle', [NavBarController::class, 'detailArticle'])->name('detailArticle');
+    Route::get('/detailArticle', [NavigationController::class, 'detailArticle'])->name('detailArticle');
 
     //Transaction
-    Route::get('/history', [NavBarController::class, 'history'])->name('history');
-    Route::get('/my-orders', [NavBarController::class, 'myorder'])->name('myorder.index');
+    Route::get('/history', [NavigationController::class, 'history'])->name('history');
+    Route::get('/my-orders', [NavigationController::class, 'myorder'])->name('myorder.index');
+
+    // Review
+    Route::middleware(['review'])->group(function () {
+        Route::get('/review/{booking}', [BookingController::class, 'create'])->name('review.create');
+        Route::post('/review/{booking}', [BookingController::class, 'make_review'])->name('review.store');
+    });
+
 });
 
 // ==============================
 // GENERAL PAGES / NAVIGATION
 // ==============================
 
-Route::get('/doctor', [VetController::class, 'doctor'])->name('doctor');
-Route::get('/articles', [NavBarController::class, 'article'])->name('articles');
-Route::get('/aplication', [NavBarController::class, 'aplication'])->name('aplication');
-Route::get('/', [BaseController::class, 'home'])->name('home');
+Route::get('/doctor', [NavigationController::class, 'doctors'])->name('doctor');
+Route::get('/articles', [NavigationController::class, 'article'])->name('articles');
+Route::get('/aplication', [NavigationController::class, 'aplication'])->name('aplication');
+Route::get('/', [NavigationController::class, 'home'])->name('home');

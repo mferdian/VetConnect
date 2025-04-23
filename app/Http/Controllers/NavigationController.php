@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Vet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class NavBarController extends Controller
+class NavigationController extends Controller
 {
     public function home()
     {
@@ -44,5 +45,11 @@ class NavBarController extends Controller
     public function aplication()
     {
         return view('downloadPage');
+    }
+
+    public function doctors()
+    {
+        $vets = Vet::all();
+        return view('doctor-page', compact('vets'));
     }
 }

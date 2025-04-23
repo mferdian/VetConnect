@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Vet extends Model
 {
@@ -17,7 +18,6 @@ class Vet extends Model
         'alamat',
         'STR',
         'SIP',
-        'hewan',
         'jenis_kelamin',
         'foto',
         'tgl_lahir',
@@ -26,10 +26,15 @@ class Vet extends Model
     ];
 
     protected $casts = [
-        'hewan' => 'array',
+        'jenis_kelamin' => 'boolean',
         'tgl_lahir' => 'date'
     ];
 
+
+    public function spesialisasis(): BelongsToMany
+    {
+        return $this->belongsToMany(Spesialisasi::class, 'spesialisasi_vets');
+    }
 
     public function articles(): HasMany
     {
@@ -38,15 +43,15 @@ class Vet extends Model
 
     public function vetDates(): HasMany
     {
-        return $this->hasMany(vetDate::class);
+        return $this->hasMany(VetDate::class);
     }
 
     public function vetTimes(): HasMany
     {
-        return $this->hasMany(vetTime::class);
+        return $this->hasMany(VetTime::class);
     }
 
-    public function vetReview(): HasMany
+    public function vetReviews(): HasMany
     {
         return $this->hasMany(Review::class);
     }

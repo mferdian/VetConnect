@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('alamat')->nullable();
             $table->string('no_telp')->nullable();
             $table->unsignedBigInteger('umur')->nullable();
+            $table->boolean('is_admin')->default(false);
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
