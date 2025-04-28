@@ -47,9 +47,10 @@
 
         <form id="payment-form" action="{{ route('payment.confirm') }}" method="POST" class="mt-8">
             @csrf
-            <input type="hidden" name="status" value="berhasil">
+            <input type="hidden" name="status">
             <input type="hidden" name="vet_id" value="{{ $vet->id }}">
-            <button type="submit" class="w-full bg-[#497D74] hover:bg-[#3a645c] text-white font-semibold py-3 rounded-lg transition duration-300">
+            <button id="pay-button" type="button"
+                class="w-full bg-[#497D74] hover:bg-[#3a645c] text-white font-semibold py-3 rounded-lg transition duration-300">
                 Bayar Sekarang
             </button>
         </form>
@@ -57,4 +58,32 @@
     @endsection
 
 </body>
+
+    @push('after-script')
+        <!-- letakkan DI ATAS AKHIR TAG </head> -->
+        <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
+        data-client-key="{{ config('midtrans.clientkey') }}">
+        </script>
+
+        <script>
+            document.getElementById('pay-button').addEventListener('click', function () {
+                window.snap.pay('{{ $snapToken }}', {
+                    onSuccess: function(result){
+                        // Kirim form secara manual ke route confirm
+                        document.getElementById('payment-form').submit();
+                    },
+                    onPending: function(result){
+                        alert("Pembayaran sedang diproses");
+                    },
+                    onError: function(result){
+                        alert("Pembayaran gagal");
+                        console.error(result);
+                    },
+                    onClose: function(){
+                        alert('Kamu menutup popup tanpa menyelesaikan pembayaran');
+                    }
+                });
+            });
+        </script>
+    @endpush
 </html>
