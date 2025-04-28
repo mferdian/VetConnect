@@ -7,8 +7,11 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ReviewController;
 
+// ==============================
+// GUEST ROUTES
+// ==============================
+
 Route::middleware('guest')->group(function () {
-    // Auth Routes
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
 
@@ -30,41 +33,32 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Booking
-    Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
-    Route::get('/booking/{id}', [BookingController::class, 'bookingDetail'])->name('booking.show');
+    // Booking & Payment
+    Route::get('/booking/{id}', [BookingController::class, 'bookingDetail'])->name('booking.show'); // Halaman pilih dokter & booking
+    Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');       // Submit booking
+    Route::get('/booking/get-times/{vetDateId}', [BookingController::class, 'getTimes'])->name('booking.getTimes'); // Ambil waktu available
 
-    // Time Slots (API)
-    Route::get('/get-time-slots', [BookingController::class, 'getTimeSlots'])->name('booking.getTimeSlots');
-    Route::get('/api/get-time-slots', [BookingController::class, 'getTimeSlots']);
-    Route::get('/booking/get-times/{vetDateId}', [BookingController::class, 'getTimes'])->name('booking.getTimeSlots');
+    // Payment Pages
+    Route::get('/payment/{vet}', [BookingController::class, 'show'])->name('payment.page');           // Halaman Midtrans Payment
+    Route::post('/payment/confirm', [BookingController::class, 'confirmPayment'])->name('payment.confirm'); // Konfirmasi pembayaran
 
+    // Transaction History
+    Route::get('/history', [BookingController::class, 'history'])->name('history');                   // Riwayat pembayaran user
+    Route::get('/my-orders', [NavigationController::class, 'myorder'])->name('myorder.index');         // Halaman orderan user (opsional)
 
-    // Payment
-    Route::get('/payment/{vet}', [BookingController::class, 'show'])->name('payment.page');
-    Route::post('/payment/confirm', [BookingController::class, 'confirmPayment'])->name('payment.confirm');
-
-    // Detail Article
-    Route::get('/detailArticle', [NavigationController::class, 'detailArticle'])->name('detailArticle');
-
-    //Transaction
-    Route::get('/history', [BookingController::class, 'history'])->name('history');
-    Route::get('/my-orders', [NavigationController::class, 'myorder'])->name('myorder.index');
-
-    // Review
+    // Review Routes (wajib lewat middleware "review")
     Route::middleware(['review'])->group(function () {
         Route::get('/review/create/{booking}', [ReviewController::class, 'create'])->name('review.create');
         Route::post('/review/store', [ReviewController::class, 'store'])->name('review.store');
     });
-
 });
 
 // ==============================
-// GENERAL PAGES / NAVIGATION
+// GENERAL PUBLIC PAGES
 // ==============================
 
+Route::get('/', [NavigationController::class, 'home'])->name('home');
 Route::get('/doctor', [NavigationController::class, 'doctors'])->name('doctor');
 Route::get('/articles', [NavigationController::class, 'article'])->name('articles');
 Route::get('/aplication', [NavigationController::class, 'aplication'])->name('aplication');
-Route::get('/', [NavigationController::class, 'home'])->name('home');
-
+Route::get('/detailArticle', [NavigationController::class, 'detailArticle'])->name('detailArticle');

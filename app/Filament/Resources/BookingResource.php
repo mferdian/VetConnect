@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\BookingResource\Pages;
-use App\Filament\Resources\BookingResource\RelationManagers;
 use App\Models\Booking;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class BookingResource extends Resource
 {
@@ -35,7 +32,7 @@ class BookingResource extends Resource
                     ->relationship('vetTime', 'jam')
                     ->required(),
                 Forms\Components\Textarea::make('keluhan')
-                    ->required(),
+                    ->nullable(), // karena di migration juga nullable
                 Forms\Components\TextInput::make('total_harga')
                     ->numeric()
                     ->prefix('Rp ')
@@ -43,22 +40,30 @@ class BookingResource extends Resource
                 Forms\Components\Select::make('status')
                     ->options([
                         'pending' => 'Pending',
-                        'confirmed' => 'Confirmed', 
+                        'confirmed' => 'Confirmed',
                         'canceled' => 'Canceled',
-                    ]),
+                    ])
+                    ->required(),
                 Forms\Components\Select::make('status_bayar')
                     ->options([
                         'berhasil' => 'Berhasil',
                         'gagal' => 'Gagal',
                         'pending' => 'Pending',
-                    ])->required(),
+                    ])
+                    ->required(),
                 Forms\Components\Select::make('metode_pembayaran')
                     ->options([
-                        'transfer_bank' => 'Cash',
-                        'e-wallet' => 'e-wallet',
+                        'transfer_bank' => 'Transfer Bank',
+                        'e-wallet' => 'E-Wallet',
                         'cash' => 'Cash',
                         'lainnya' => 'Lainnya',
-                    ]),
+                    ])
+                    ->required(),
+                Forms\Components\TextInput::make('order_id')
+                    ->required()
+                    ->unique(Booking::class, 'order_id')
+                    ->readOnlyOn('edit') // agar pas edit tidak perlu ganti
+                    ->default(fn() => Booking::generateUniqueOrderId()), // auto-generate di create
             ]);
     }
 
@@ -70,8 +75,13 @@ class BookingResource extends Resource
                 Tables\Columns\TextColumn::make('vet.nama')->label('Dokter'),
                 Tables\Columns\TextColumn::make('vetDate.tanggal')->label('Tanggal'),
                 Tables\Columns\TextColumn::make('vetTime.jam')->label('Jam'),
-                Tables\Columns\TextColumn::make('status'),
-                Tables\Columns\TextColumn::make('status_bayar'),
+                Tables\Columns\TextColumn::make('total_harga')
+                    ->money('IDR')
+                    ->label('Total Harga'),
+                Tables\Columns\TextColumn::make('status')->label('Status'),
+                Tables\Columns\TextColumn::make('status_bayar')->label('Status Bayar'),
+                Tables\Columns\TextColumn::make('metode_pembayaran')->label('Metode Pembayaran'),
+                Tables\Columns\TextColumn::make('order_id')->label('Order ID'),
             ])
             ->filters([
                 //
@@ -82,7 +92,7 @@ class BookingResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

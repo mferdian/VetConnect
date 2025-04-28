@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Booking;
-use App\Models\Review;
-use App\Models\Vet;
-use App\Models\VetDate;
-use App\Models\VetTime;
 use Carbon\Carbon;
-use Illuminate\Container\Attributes\Log;
+use Midtrans\Snap;
+use App\Models\Vet;
+use Midtrans\Config;
+use App\Models\Review;
+use App\Models\Booking;
+use App\Models\VetTime;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,47 +19,23 @@ class BookingController extends Controller
     {
         $vet = Vet::with(['vetReviews', 'vetDates.vetTimes'])->findOrFail($id);
 
-        // Jika tidak ada tanggal, buat tanggal dan waktu untuk 14 hari ke depan
+        // Generate tanggal dan waktu kalau kosong
         if ($vet->vetDates->isEmpty()) {
             $this->generateAvailableDates($vet->id);
-            // Reload vet dengan data baru
             $vet = Vet::with(['vetReviews', 'vetDates.vetTimes'])->findOrFail($id);
         }
 
         return view('booking-detail', compact('vet'));
     }
 
-    public function getTimeSlots(Request $request)
-    {
-        $vetDate = \App\Models\VetDate::where('vet_id', $request->vet_id)
-            ->where('tanggal', $request->date)
-            ->with('vetTimes')
-            ->first();
-
-        if (!$vetDate) {
-            return response()->json(['times' => []]); // Kosong jika tidak ada jadwal
-        }
-
-        return response()->json([
-            'times' => $vetDate->vetTimes->map(function ($time) {
-                return [
-                    'id' => $time->id,
-                    'jam' => $time->jam
-                ];
-            })
-        ]);
-    }
-
-
     private function generateAvailableDates($vetId)
     {
         $startDate = Carbon::today();
 
-        // Generate tanggal untuk 14 hari ke depan
         for ($i = 0; $i < 14; $i++) {
             $date = $startDate->copy()->addDays($i);
 
-            // Skip hari Minggu jika perlu
+            // Skip hari Minggu
             if ($date->dayOfWeek === Carbon::SUNDAY) {
                 continue;
             }
@@ -68,11 +45,7 @@ class BookingController extends Controller
                 'tanggal' => $date
             ]);
 
-            // Generate slot waktu dari jam 8 pagi sampai 5 sore
-            $startTime = 8;
-            $endTime = 17;
-
-            for ($hour = $startTime; $hour < $endTime; $hour++) {
+            for ($hour = 8; $hour < 17; $hour++) {
                 \App\Models\VetTime::create([
                     'vet_date_id' => $vetDate->id,
                     'jam' => sprintf('%02d:00', $hour)
@@ -81,10 +54,20 @@ class BookingController extends Controller
         }
     }
 
+    public static function generateUniqueOrderId(): string
+    {
+        $prefix = 'ORDER-';
+
+        do {
+            $randomString = $prefix . mt_rand(100000, 999999); // Random 6 digit
+        } while (Booking::where('order_id', $randomString)->exists());
+
+        return $randomString;
+    }
+
 
     public function store(Request $request)
     {
-
         $request->validate([
             'vet_id' => 'required|exists:vets,id',
             'vet_date_id' => 'required|exists:vet_dates,id',
@@ -92,20 +75,22 @@ class BookingController extends Controller
             'keluhan' => 'required|string',
         ]);
 
-        // Simpan data booking di session (sementara)
+         // Generate order_id otomatis kombinasi tanggal + random
+         $orderId = self::generateUniqueOrderId();
+
         session(['booking_data' => [
             'user_id' => Auth::id(),
             'vet_id' => $request->vet_id,
             'vet_date_id' => $request->vet_date_id,
             'vet_time_id' => $request->vet_time_id,
             'keluhan' => $request->keluhan,
-            'total_harga' => $request->harga, // Sesuaikan harga sesuai sistem
+            'total_harga' => $request->harga,
             'status' => 'pending',
             'status_bayar' => 'pending',
             'metode_pembayaran' => 'transfer_bank',
+            'order_id' => $orderId,
         ]]);
 
-        // Redirect ke halaman pembayaran
         return redirect()->route('payment.page', ['vet' => $request->vet_id]);
     }
 
@@ -115,47 +100,77 @@ class BookingController extends Controller
         return response()->json($vetTimes);
     }
 
-
-    public function show(Vet $vet)
+    public function show($vetId)
     {
-        return view('payment-page', compact('vet'));
-    }
+        $vet = Vet::findOrFail($vetId);
 
-    public function confirmPayment(Request $request)
-    {
-        // Contoh: Cek apakah pembayaran berhasil dari sistem pembayaran
-        $paymentStatus = $request->input('status');
+        $bookingData = session('booking_data');
 
-        if ($paymentStatus === 'berhasil') {
-            // Ambil data dari session
-            $bookingData = session('booking_data');
-
-            if ($bookingData) {
-                // Simpan ke database
-                Booking::create(array_merge($bookingData, [
-                    'status_bayar' => 'berhasil',
-                    'status' => 'confirmed',
-                ]));
-
-                // Hapus data session
-                session()->forget('booking_data');
-
-                return redirect()->route('booking.show', $bookingData['vet_id'])->with('success', 'Booking berhasil!');
-            }
+        if (!$bookingData) {
+            return redirect()->route('home')->with('error', 'Data booking tidak ditemukan.');
         }
 
-        return redirect()->route('payment.page', $request->vet_id)->with('error', 'Pembayaran gagal, silakan coba lagi.');
+        // Midtrans Setup
+        Config::$serverKey = config('midtrans.serverKey');
+        Config::$isProduction = config('midtrans.isProduction');
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
+
+        // Kalau sudah ada Snap Token di session, pakai itu
+        if (isset($bookingData['snap_token']) && !empty($bookingData['snap_token'])) {
+            $snapToken = $bookingData['snap_token'];
+        } else {
+            // Kalau belum ada, baru generate Snap Token baru
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $bookingData['order_id'],
+                    'gross_amount' => $bookingData['total_harga'],
+                ],
+                'customer_details' => [
+                    'first_name' => Auth::user()->name,
+                    'email' => Auth::user()->email,
+                ],
+            ];
+
+            $snapToken = Snap::getSnapToken($params);
+
+            // Update session dengan snap_token
+            session(['booking_data' => array_merge($bookingData, [
+                'snap_token' => $snapToken,
+            ])]);
+        }
+
+        return view('payment-midtrans', compact('vet', 'snapToken'));
     }
+
+        public function confirmPayment(Request $request)
+    {
+        $paymentStatus = $request->input('status');
+
+        $bookingData = session('booking_data');
+
+        if ($paymentStatus === 'berhasil' && $bookingData) {
+            Booking::create(array_merge($bookingData, [
+                'status' => 'confirmed',
+                'status_bayar' => 'berhasil',
+            ]));
+
+            session()->forget('booking_data');
+
+            // Setelah pembayaran berhasil, redirect ke riwayat booking
+            return redirect()->route('myorder.index')->with('success', 'Booking berhasil! Silakan cek pesanan Anda di My Orders.');
+        }
+
+        return redirect()->route('payment.page', ['vet' => $bookingData['vet_id'] ?? null])->with('error', 'Pembayaran gagal, silakan coba lagi.');
+    }
+
 
     public function create(Booking $booking)
     {
-
-        // Cek apakah user memang pemilik booking
         if ($booking->user_id !== Auth::id()) {
             abort(403);
         }
 
-        // Cek apakah sudah ada review
         $existingReview = Review::where('booking_id', $booking->id)->first();
         if ($existingReview) {
             return redirect()->back()->with('error', 'Kamu sudah memberikan review untuk booking ini.');
@@ -166,7 +181,6 @@ class BookingController extends Controller
 
     public function make_review(Request $request, Booking $booking)
     {
-
         if ($booking->user_id !== Auth::id()) {
             abort(403);
         }
@@ -189,13 +203,11 @@ class BookingController extends Controller
 
     public function history()
     {
-        // Ambil data riwayat transaksi dari model Booking
         $paymentHistory = Booking::where('user_id', Auth::id())
-            ->where('status_bayar', '!=', null)
+            ->whereNotNull('status_bayar')
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Kirim data ke view
         return view('historyPage', compact('paymentHistory'));
     }
 }
