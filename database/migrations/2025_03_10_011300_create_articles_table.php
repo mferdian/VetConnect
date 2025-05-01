@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('vet_id')->constrained()->cascadeOnDelete();
             $table->string('judul');
-            $table->string('isi');
+            $table->text('isi'); 
             $table->json('gambar');
             $table->timestamps();
         });
