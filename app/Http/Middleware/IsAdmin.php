@@ -16,9 +16,12 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check() || !Auth::user()->is_admin) {
+        $guard = Auth::guard('admin');
+
+        if (!$guard->check() || !$guard->user()->is_admin) {
             abort(403, 'Akses hanya untuk admin.');
         }
+
         return $next($request);
     }
 }
