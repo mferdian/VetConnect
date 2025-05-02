@@ -10,7 +10,6 @@ use App\Models\User;
 
 class ProfileController extends Controller
 {
-    // Show the profile page
     public function show()
     {
         return view('auth.profile');

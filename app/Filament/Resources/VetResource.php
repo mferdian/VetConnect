@@ -3,9 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\VetResource\Pages;
-use App\Models\Spesialisasi;
 use App\Models\Vet;
-use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
@@ -14,7 +12,6 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -129,17 +126,11 @@ class VetResource extends Resource
                     ->boolean()
                     ->trueIcon('heroicon-o-user')
                     ->falseIcon('heroicon-o-user')
-                    ->trueColor('primary')
+                    ->trueColor('info')
                     ->falseColor('danger')
                     ->sortable()
                     ->alignCenter()
                     ->tooltip(fn (bool $state): string => $state ? 'Laki-laki' : 'Perempuan'),
-
-                TextColumn::make('spesialisasis.nama_hewan')
-                    ->label('Spesialisasi')
-                    ->badge()
-                    ->separator(', ')
-                    ->color('info'),
             ])
             ->filters([
                 Tables\Filters\Filter::make('jenis_kelamin')
