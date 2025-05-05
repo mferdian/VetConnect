@@ -19,17 +19,31 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        Vet::factory(10)->create();
-        Spesialisasi::factory()->count(5)->create();
-        VetDate::factory()->count(7)->create();
-        VetTime::factory()->count(10)->create();
+        Vet::factory(10)
+        ->has(
+            VetDate::factory()
+                ->count(3)
+                ->has(VetTime::factory()->count(4), 'vetTimes'),
+            'vetDates'
+        )
+        ->create();
 
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@vetconnect.com',
-            'password' => bcrypt('gugun123'),
-            'is_admin' => true,
-        ]);
+    Spesialisasi::factory()->count(5)->create();
+
+    User::factory()->create([
+        'name' => 'Admin',
+        'email' => 'admin@vetconnect.com',
+        'password' => bcrypt('gugun123'),
+        'is_admin' => true,
+    ]);
+
+    User::factory()->create([
+        'name' => 'birra',
+        'email' => 'birra@gmaiL.com',
+        'password' => bcrypt('birra123'),
+        'is_admin' => false,
+    ]);
+
 
 
     }
