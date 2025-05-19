@@ -1,78 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VetConnect - Payment History</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="bg-gray-100">
+@extends('layouts.app')
 
-    @include('layouts._navbar')
+@section('title', 'VetConnect - Riwayat Janji Temu')
 
-    <!-- Payment History Section -->
-    <div class="max-w-5xl mx-auto mt-6">
-        <h2 class="mb-4 text-2xl font-semibold text-gray-800">Payment History</h2>
+@section('content')
+<div class="max-w-4xl px-4 py-10 mx-auto">
+    <h1 class="mb-6 text-3xl font-bold text-gray-800">Riwayat Janji Temu</h1>
 
-        <!-- Filter Buttons -->
-        <div class="flex mb-4 space-x-4">
-            <button class="px-6 py-2 font-medium text-gray-700 border rounded-full">All</button>
-            <button class="px-6 py-2 font-medium text-gray-700 border rounded-full">Complete</button>
-            <button class="px-6 py-2 font-medium text-gray-700 border rounded-full">Canceled</button>
+    {{-- Notifikasi Flash Message --}}
+    @if (session('success'))
+        <div class="p-4 mb-4 text-green-800 bg-green-100 border border-green-300 rounded">
+            {{ session('success') }}
         </div>
-
-        <!-- Table -->
-        <div class="p-4 bg-white rounded-lg shadow">
-            <table class="w-full">
-                <thead>
-                    <tr class="text-left text-gray-600 border-b">
-                        <th class="py-2">Dokter</th>
-                        <th class="py-2">Date</th>
-                        <th class="py-2">Amount</th>
-                        <th class="py-2">Jam</th>
-                        <th class="py-2">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($paymentHistory as $transaction)
-                        <tr class="border-b">
-                            <td class="py-2">{{ $transaction->vet->nama ?? '-' }}</td> {{-- Nama Dokter (asumsi ada relasi ke model Vet) --}}
-                            <td>{{ $transaction->vetDate->tanggal ?? '-' }}</td>
-                            <td>Rp {{ number_format($transaction->total_harga, 0, ',', '.') }}</td> {{-- Total Harga --}}
-                            <td>{{ $transaction->vetTime->jam_mulai ?? '-' }} - {{ $transaction->vetTime->jam_selesai ?? '-' }}</td>
-                            <td>
-                                @if ($transaction->status_bayar === 'berhasil')
-                                    <span class="text-green-500">Success</span>
-                                @elseif ($transaction->status_bayar === 'pending')
-                                    <span class="text-blue-500">Pending</span>
-                                @elseif ($transaction->status_bayar === 'gagal' || $transaction->status_bayar === 'canceled')
-                                    <span class="text-red-500">{{ ucfirst($transaction->status_bayar) }}</span>
-                                @else
-                                    {{ ucfirst($transaction->status_bayar) ?? '-' }}
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td class="py-2 text-center" colspan="5">Tidak ada riwayat transaksi.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+    @elseif (session('error'))
+        <div class="p-4 mb-4 text-red-800 bg-red-100 border border-red-300 rounded">
+            {{ session('error') }}
         </div>
+    @endif
 
-        <!-- Pagination -->
-        <div class="flex items-center justify-between mt-4 text-gray-600">
-            <span>
-                <select class="p-2 border rounded">
-                    <option>10</option>
-                    <option>20</option>
-                    <option>50</option>
-                </select> per page
-            </span>
-            <span>1 of 1 pages</span>
+    @forelse ($bookings as $booking)
+        <div class="p-6 mb-4 bg-white rounded-lg shadow">
+            <h2 class="text-xl font-semibold text-[#497D74]">Dr. {{ $booking->vet->nama }}</h2>
+            <p class="text-gray-600">{{ $booking->vet->spesialisasi ?? 'Dokter Hewan' }}</p>
+
+            <div class="mt-2 text-sm text-gray-700">
+                <i class="mr-1 fas fa-calendar-alt text-[#497D74]"></i>
+                {{ $booking->vetDate->tanggal->translatedFormat('l, d F Y') }}
+                <span class="ml-4">
+                    <i class="mr-1 fas fa-clock text-[#497D74]"></i>
+                    {{ $booking->vetTime->jam }}
+                </span>
+            </div>
+
+            <div class="mt-4">
+                @if ($booking->review)
+                    <span class="inline-block px-3 py-1 text-sm font-medium text-green-800 bg-green-100 rounded-full">
+                        Sudah Direview ⭐ {{ $booking->review->rating }}/5
+                    </span>
+                @else
+                    <a href="{{ route('review.create', ['booking' => $booking->id]) }}"
+                        class="inline-block px-4 py-2 text-white bg-[#497D74] rounded hover:bg-[#3d6a61]">
+                        Beri Review
+                    </a>
+                @endif
+            </div>
         </div>
-    </div>
-
-</body>
-</html>
+    @empty
+        <p class="text-gray-600">Belum ada riwayat janji temu.</p>
+    @endforelse
+</div>
+@endsection
