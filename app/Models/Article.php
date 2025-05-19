@@ -16,12 +16,14 @@ class Article extends Model
         'isi',
         'gambar'
     ];
-    
+
     protected $casts = [
         'gambar' => 'array',
     ];
 
-    public function vet():BelongsTo {
-        return $this->belongsTo(Vet::class,'vet_id');
+    public function vet(): BelongsTo
+    {
+        return $this->belongsTo(Vet::class, 'vet_id');
     }
+
 }

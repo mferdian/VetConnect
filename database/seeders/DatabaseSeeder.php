@@ -17,9 +17,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
 
-        Vet::factory(10)
+    Vet::factory(10)
         ->has(
             VetDate::factory()
                 ->count(3)

@@ -9,20 +9,13 @@ use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
-    public function create($bookingId)
+
+    /**
+     * Show the form for creating a new review.
+     */
+    public function create(Booking $booking)
     {
-        $booking = Booking::with('vet')->findOrFail($bookingId);
-
-        // Ensure the user can only review their own bookings
-        if ($booking->user_id !== Auth::id()) {
-            return redirect()->route('bookings.index')->with('error', 'Anda tidak memiliki akses ke janji temu ini.');
-        }
-
-        // Ensure the booking is confirmed and hasn't been reviewed yet
-        if ($booking->status !== 'confirmed' || $booking->review) {
-            return redirect()->route('bookings.index')->with('error', 'Janji temu ini tidak dapat direview.');
-        }
-
+        // Booking sudah di-load oleh middleware Review
         return view('review', compact('booking'));
     }
 
@@ -37,11 +30,11 @@ class ReviewController extends Controller
             'review' => 'required|string|max:500',
         ]);
 
-        $booking = Booking::with('vet')->findOrFail($validated['booking_id']);
+        $booking = Booking::findOrFail($validated['booking_id']);
 
-        // Ensure the user can only review their own bookings
+        // Middleware seharusnya sudah memastikan ini, tapi tidak ada salahnya untuk check lagi
         if ($booking->user_id !== Auth::id()) {
-            return redirect()->route('bookings.index')->with('error', 'Anda tidak memiliki akses ke janji temu ini.');
+            return redirect()->route('history')->with('error', 'Anda tidak memiliki akses ke janji temu ini.');
         }
 
         // Create the review
@@ -53,7 +46,7 @@ class ReviewController extends Controller
             'review' => $validated['review'],
         ]);
 
-        return redirect()->route('bookings.index')->with('success', 'Terima kasih atas review Anda!');
+        return redirect()->route('history')->with('success', 'Terima kasih atas review Anda!');
     }
 
     /**
@@ -67,6 +60,6 @@ class ReviewController extends Controller
                     ->take(3)
                     ->get();
 
-        return view('home', compact('reviews'));
+        return response()->json($reviews);
     }
 }

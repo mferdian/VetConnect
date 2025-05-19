@@ -26,6 +26,18 @@ class Booking extends Model
         'metode_pembayaran'
     ];
 
+    public static function generateUniqueOrderId(): string
+    {
+        $prefix = 'ORDER-';
+
+        do {
+            $randomString = $prefix . mt_rand(100000, 999999); // Random 6 digit
+        } while (self::where('order_id', $randomString)->exists());
+
+        return $randomString;
+    }
+
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
