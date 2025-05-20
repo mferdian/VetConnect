@@ -6,7 +6,9 @@ use App\Http\Controllers\NavigationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ReviewController;
-use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Route;
+
+
 
 // ==============================
 // GUEST ROUTES
