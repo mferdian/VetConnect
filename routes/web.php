@@ -8,6 +8,8 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
+
+
 // ==============================
 // GUEST ROUTES
 // ==============================

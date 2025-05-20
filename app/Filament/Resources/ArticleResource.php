@@ -15,6 +15,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
+use App\Models\Vet;
 
 class ArticleResource extends Resource
 {

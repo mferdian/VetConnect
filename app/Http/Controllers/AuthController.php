@@ -71,4 +71,32 @@ class AuthController extends Controller
         Auth::logout(Auth::user());
         return redirect('/');
     }
+
+    // public function deleteAccount(Request $request)
+    // {
+    //     $request->validate([
+    //         'password' => 'required',
+    //     ], [
+    //         'password.required' => 'Password wajib diisi untuk konfirmasi penghapusan akun!',
+    //     ]);
+
+    //     $user = Auth::user();
+
+    //     if (!Hash::check($request->password, $user->password)) {
+    //         return back()->withErrors(['password' => 'Password yang dimasukkan salah!']);
+    //     }
+
+    //     // Hapus user dari database menggunakan User::destroy()
+    //     $userId = $user->id;
+
+    //     // Logout sebelum menghapus akun
+    //     Auth::logout();
+    //     $request->session()->invalidate();
+    //     $request->session()->regenerateToken();
+
+    //     // Hapus user dari database setelah logout
+    //     User::destroy($userId);
+
+    //     return redirect()->route('login')->with('success', 'Akun Anda telah berhasil dihapus.');
+    // }
 }
