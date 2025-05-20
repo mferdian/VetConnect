@@ -75,7 +75,6 @@ class BookingController extends Controller
             'keluhan' => 'required|string',
         ]);
 
-         // Generate order_id otomatis kombinasi tanggal + random
          $orderId = self::generateUniqueOrderId();
 
         session(['booking_data' => [
@@ -201,13 +200,14 @@ class BookingController extends Controller
         return redirect()->route('home')->with('success', 'Review berhasil dikirim!');
     }
 
+// In your BookingController:
     public function history()
     {
-        $paymentHistory = Booking::where('user_id', Auth::id())
-            ->whereNotNull('status_bayar')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $bookings = Booking::where('user_id', Auth::id())
+                    ->with(['vet', 'vetDate', 'vetTime', 'review'])
+                    ->orderBy('created_at', 'desc')
+                    ->get();
 
-        return view('historyPage', compact('paymentHistory'));
+        return view('historyPage', compact('bookings'));
     }
 }

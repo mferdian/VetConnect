@@ -29,7 +29,6 @@ class ArticleResource extends Resource
                 Select::make('vet_id')
                     ->label('Author')
                     ->relationship('vet', 'nama')
-                    ->searchable()
                     ->required(),
                 TextInput::make('judul')
                     ->label('Judul Artikel')

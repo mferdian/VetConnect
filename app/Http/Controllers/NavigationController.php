@@ -21,11 +21,6 @@ class NavigationController extends Controller
         return view('home', compact('reviews'));
     }
 
-    public function article()
-    {
-        return view('articlePage');
-    }
-
     public function doctor()
     {
         return view('doctor-page');

@@ -1,11 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NavigationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ReviewController;
+use Illuminate\Support\Facades\Route;
 
 // ==============================
 // GUEST ROUTES
@@ -26,6 +27,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('/delete-account', [AuthController::class, 'deleteAccount'])->name('delete-account');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
@@ -46,11 +48,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/history', [BookingController::class, 'history'])->name('history');                   // Riwayat pembayaran user
     Route::get('/my-orders', [NavigationController::class, 'myorder'])->name('myorder.index');         // Halaman orderan user (opsional)
 
-    // Review Routes (wajib lewat middleware "review")
+    // Article
+    Route::get('/articles/{id}', [ArticleController::class, 'show'])->name('articles.show');
+
+// Review Routes (going through the "review" middleware)
     Route::middleware(['review'])->group(function () {
         Route::get('/review/create/{booking}', [ReviewController::class, 'create'])->name('review.create');
-        Route::post('/review/store', [ReviewController::class, 'store'])->name('review.store');
     });
+    Route::post('/review/store', [ReviewController::class, 'store'])->name('review.store');
 });
 
 // ==============================
@@ -59,6 +64,6 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/', [NavigationController::class, 'home'])->name('home');
 Route::get('/doctor', [NavigationController::class, 'doctors'])->name('doctor');
-Route::get('/articles', [NavigationController::class, 'article'])->name('articles');
+Route::get('/articles', [ArticleController::class, 'index'])->name('articles');
 Route::get('/aplication', [NavigationController::class, 'aplication'])->name('aplication');
 Route::get('/detailArticle', [NavigationController::class, 'detailArticle'])->name('detailArticle');

@@ -5,6 +5,9 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BookingResource\Pages;
 use App\Models\Booking;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -19,39 +22,39 @@ class BookingResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('user_id')
+                Select::make('user_id')
                     ->relationship('user', 'name')
                     ->required(),
-                Forms\Components\Select::make('vet_id')
+                Select::make('vet_id')
                     ->relationship('vet', 'nama')
                     ->required(),
-                Forms\Components\Select::make('vet_date_id')
+                Select::make('vet_date_id')
                     ->relationship('vetDate', 'tanggal')
                     ->required(),
-                Forms\Components\Select::make('vet_time_id')
-                    ->relationship('vetTime', 'jam')
+                Select::make('vet_time_id')
+                    ->relationship('vetTime', 'jam_mulai')
                     ->required(),
-                Forms\Components\Textarea::make('keluhan')
+                Textarea::make('keluhan')
                     ->nullable(), // karena di migration juga nullable
-                Forms\Components\TextInput::make('total_harga')
+                TextInput::make('total_harga')
                     ->numeric()
                     ->prefix('Rp ')
                     ->required(),
-                Forms\Components\Select::make('status')
+                Select::make('status')
                     ->options([
                         'pending' => 'Pending',
                         'confirmed' => 'Confirmed',
                         'canceled' => 'Canceled',
                     ])
                     ->required(),
-                Forms\Components\Select::make('status_bayar')
+                Select::make('status_bayar')
                     ->options([
                         'berhasil' => 'Berhasil',
                         'gagal' => 'Gagal',
                         'pending' => 'Pending',
                     ])
                     ->required(),
-                Forms\Components\Select::make('metode_pembayaran')
+                Select::make('metode_pembayaran')
                     ->options([
                         'transfer_bank' => 'Transfer Bank',
                         'e-wallet' => 'E-Wallet',
@@ -59,11 +62,11 @@ class BookingResource extends Resource
                         'lainnya' => 'Lainnya',
                     ])
                     ->required(),
-                Forms\Components\TextInput::make('order_id')
+                TextInput::make('order_id')
                     ->required()
                     ->unique(Booking::class, 'order_id')
-                    ->readOnlyOn('edit') // agar pas edit tidak perlu ganti
-                    ->default(fn() => Booking::generateUniqueOrderId()), // auto-generate di create
+                    ->readOnlyOn('edit')
+                    ->default(fn() => Booking::generateUniqueOrderId()),
             ]);
     }
 
