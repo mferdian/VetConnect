@@ -18,10 +18,18 @@ class NavigationController extends Controller
         ->take(3)
         ->get();
 
-        return view('home', compact('reviews'));
+            $reviews = ModelsReview::with(['user', 'vet'])
+        ->orderBy('rating', 'desc')
+        ->orderBy('created_at', 'desc')
+        ->take(3)
+        ->get();
+
+        $vets = Vet::latest()->take(4)->get(); // Ambil 4 dokter terbaru
+
+        return view('home', compact('reviews', 'vets'));
     }
 
-    public function doctor()
+   public function doctor()
     {
         return view('doctor-page');
     }
@@ -52,7 +60,8 @@ class NavigationController extends Controller
 
     public function doctors()
     {
-        $vets = Vet::all();
+        $vets = Vet::paginate(5);
         return view('doctor-page', compact('vets'));
     }
+
 }
