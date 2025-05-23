@@ -9,16 +9,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 class IsAdmin
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next): Response
     {
-        $guard = Auth::guard('admin');
-
-        if (!$guard->check() || !$guard->user()->is_admin) {
+        
+        if (!Auth::check()) {
+            return $next($request);
+        }
+        if (!Auth::user()->is_admin) {
             abort(403, 'Akses hanya untuk admin.');
         }
 

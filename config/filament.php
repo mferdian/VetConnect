@@ -89,8 +89,7 @@ return [
     'path' => 'admin',
 
     'auth' => [
-        'guard' => 'web', // atau guard lain kalau kamu pakai multi-auth
+        'guard' => 'web',
     ],
-
 
 ];
