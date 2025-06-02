@@ -303,15 +303,16 @@
             </section>
 
             <!-- CTA Section -->
-            <section class="py-16 text-white bg-gradient-to-r from-emerald-800 to-emerald-900">
+
+
+    <!-- Footer -->
+    <footer class="py-10 mt-20 bg-emerald-800" x-data="{ show: false }" x-init="setTimeout(() => show = true, 500)">
+            <section class="py-16 text-white bg-gradient-to-r">
                 <div class="container px-6 mx-auto text-center">
                     <h2 class="text-3xl font-bold">Siap Memberikan Perawatan Terbaik</h2>
                     <p class="max-w-2xl mx-auto mt-4 text-emerald-100">Bergabunglah dengan ribuan pemilik hewan yang telah mempercayakan kesehatan hewan peliharaan mereka kepada kami.</p>
                 </div>
             </section>
-
-    <!-- Footer -->
-    <footer class="py-10 mt-20 bg-emerald-800" x-data="{ show: false }" x-init="setTimeout(() => show = true, 500)">
         <div class="container flex flex-col px-6 mx-auto space-y-6 md:flex-row md:space-y-0 md:space-x-12" x-show="show" x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0 translate-y-10" x-transition:enter-end="opacity-100 translate-y-0">
             <div class="md:w-1/2">
                 <h3 class="text-xl font-bold text-white">Vet<span class="text-white">Connect</span></h3>
@@ -333,7 +334,7 @@
         </div>
     </footer>
 
-    {{-- <script src="/script.js"></script> --}}
+    <script src="/script.js"></script>
 </body>
 
 </html>
