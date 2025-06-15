@@ -9,7 +9,10 @@
 <body class="bg-gray-100">
 
     <!-- Navbar -->
-    @include('layouts._navbar')
+    @extends('layouts.app')
+
+    @section('content')
+
 
     <!-- Main Content -->
     <div class="flex flex-col items-center justify-between px-6 py-12 mx-auto md:flex-row max-w-7xl">
@@ -42,6 +45,7 @@
             </div>
         </div>
     </div>
+    @endsection
 
 </body>
 </html>

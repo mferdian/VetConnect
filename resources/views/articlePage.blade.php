@@ -12,8 +12,9 @@
 <body class="bg-gray-100">
 
     <!-- Navbar -->
-    @include('layouts._navbar')
+    @extends('layouts.app')
 
+    @section('content')
     <!-- Artikel Section -->
     <section class="container px-6 mx-auto mt-12">
         <div class="space-y-8">
@@ -37,6 +38,7 @@
 
         </div>
     </section>
+    @endsection
 
 </body>
 

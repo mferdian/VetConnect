@@ -8,7 +8,9 @@
 <body class="bg-gray-100">
 
     <!-- Navbar -->
-    @include('layouts._navbar')
+    @extends('layouts.app')
+
+    @section('content')
 
     <!-- Hero Section -->
     <section class="container flex flex-col px-6 mx-auto mt-12 md:flex-row">
@@ -139,6 +141,7 @@
             </div>
         </div>
     </div>
+    @endsection
 </footer>
 
 <!-- Tambahkan CSS untuk memindahkan elemen -->
