@@ -18,7 +18,7 @@ class VetTimeFactory extends Factory
 
         return [
             'vet_date_id' => VetDate::factory(),
-            'jam_mulai' => sprintf('%02d:00:00', $jamMulai),
+            'jam_mulai' => sprintf('%02d:00:00', $jamMulai),   // ✅ hanya jam
             'jam_selesai' => sprintf('%02d:00:00', $jamSelesai),
         ];
     }
