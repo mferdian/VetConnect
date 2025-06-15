@@ -26,7 +26,7 @@ class VetTime extends Model
         return $this->belongsTo(VetDate::class);
     }
 
-    // Accessor untuk format waktu yang konsisten
+
     public function getJamMulaiFormattedAttribute()
     {
         return $this->jam_mulai ? substr($this->jam_mulai, 0, 5) : null; // HH:MM
@@ -37,7 +37,7 @@ class VetTime extends Model
         return $this->jam_selesai ? substr($this->jam_selesai, 0, 5) : null; // HH:MM
     }
 
-    // Mutator untuk memastikan format yang benar saat save
+
     public function setJamMulaiAttribute($value)
     {
         $this->attributes['jam_mulai'] = is_string($value) ? $value :
