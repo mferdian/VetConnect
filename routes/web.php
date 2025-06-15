@@ -40,7 +40,6 @@ Route::middleware('auth')->group(function () {
     // Booking & Payment
     Route::get('/booking/{id}', [BookingController::class, 'bookingDetail'])->name('booking.show'); // Halaman pilih dokter & booking
     Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');       // Submit booking
-    Route::get('/booking/get-times/{vetDateId}', [BookingController::class, 'getTimes'])->name('booking.getTimes'); // Ambil waktu available
 
     // Payment Pages
     Route::get('/payment/{vet}', [BookingController::class, 'show'])->name('payment.page');           // Halaman Midtrans Payment
@@ -52,6 +51,9 @@ Route::middleware('auth')->group(function () {
 
     // Article
     Route::get('/articles/{id}', [ArticleController::class, 'show'])->name('articles.show');
+
+    // DEBUG ROUTE - HAPUS SETELAH TESTING
+    Route::get('/debug-timezone', [BookingController::class, 'debugTimezone']);
 
 // Review Routes (going through the "review" middleware)
     Route::middleware(['review'])->group(function () {
@@ -69,3 +71,4 @@ Route::get('/doctor', [NavigationController::class, 'doctors'])->name('doctor');
 Route::get('/articles', [ArticleController::class, 'index'])->name('articles');
 Route::get('/aplication', [NavigationController::class, 'aplication'])->name('aplication');
 Route::get('/detailArticle', [NavigationController::class, 'detailArticle'])->name('detailArticle');
+Route::get('/booking/get-times/{vetDateId}', [BookingController::class, 'getTimes'])->name('booking.getTimes'); // Ambil waktu available
