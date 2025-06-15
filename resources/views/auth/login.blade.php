@@ -1,21 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="bg-gray-100">
+@extends('layouts.app')
+
+@php($noNavbar = true)
+@section('title', 'Login')
+
+@section('content')
 <div class="flex items-center justify-center min-h-screen px-4 py-8">
-    @section('content')
     <div class="flex w-full max-w-5xl overflow-hidden bg-white shadow-lg rounded-3xl">
 
-        {{-- Kiri: Form login --}}
+        {{-- Kiri: Form Login --}}
         <div class="w-full p-8 md:w-1/2">
             <h2 class="mb-2 text-2xl font-bold">Login</h2>
             <p class="mb-6 text-sm text-gray-600">Enter your account to Login</p>
 
+            {{-- Flash Messages --}}
             @if(session('failed'))
                 <div class="p-4 mb-6 text-red-700 bg-red-100 border border-red-400 rounded-lg">
                     {{ session('failed') }}
@@ -28,14 +25,15 @@
                 </div>
             @endif
 
+            {{-- Login Form --}}
             <form action="{{ route('login') }}" method="POST" class="space-y-4">
                 @csrf
 
                 <div>
                     <label for="email" class="block mb-1 text-sm font-medium text-gray-700">Email address</label>
-                    <input type="email" name="email" id="email" placeholder="Enter your email"
-                        value="{{ old('email') }}"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    <input type="email" name="email" id="email" value="{{ old('email') }}"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        placeholder="Enter your email">
                     @error('email')
                         <small class="block mt-1 text-red-500">{{ $message }}</small>
                     @enderror
@@ -43,10 +41,9 @@
 
                 <div>
                     <label for="password" class="block mb-1 text-sm font-medium text-gray-700">Password</label>
-                    <div class="flex justify-between">
-                        <input type="password" name="password" id="password" placeholder="••••••••"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
-                    </div>
+                    <input type="password" name="password" id="password"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        placeholder="••••••••">
                     @error('password')
                         <small class="block mt-1 text-red-500">{{ $message }}</small>
                     @enderror
@@ -64,21 +61,22 @@
 
                 <div class="flex flex-col sm:flex-row">
                     <button type="button" class="flex items-center justify-center w-full gap-2 py-2 text-sm border rounded-lg hover:bg-gray-100">
-                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5"> Login with Google
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
+                        Login with Google
                     </button>
                 </div>
             </form>
 
             <p class="mt-6 text-sm text-center text-gray-600">
-                Don’t have an account? <a href="{{ route('register') }}" class="font-medium text-emerald-600 hover:text-emerald-500">Register</a>
+                Don’t have an account?
+                <a href="{{ route('register') }}" class="font-medium text-emerald-600 hover:text-emerald-500">Register</a>
             </p>
         </div>
 
         {{-- Kanan: Gambar --}}
-        <div class="hidden w-1/2 bg-center bg-cover md:block rounded-r-3xl" style="background-image: url('{{ asset('images/login.jpg') }}')">
+        <div class="hidden w-1/2 bg-center bg-cover md:block rounded-r-3xl"
+             style="background-image: url('{{ asset('images/login.jpg') }}')">
         </div>
     </div>
 </div>
-    @endsection
-</body>
-</html>
+@endsection
