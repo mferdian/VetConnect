@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,8 +15,38 @@ class VetTime extends Model
         'jam_selesai',
     ];
 
+    // Casting yang tepat untuk PostgreSQL TIME field
+    protected $casts = [
+        'jam_mulai' => 'string',
+        'jam_selesai' => 'string',
+    ];
+
     public function vetDate(): BelongsTo
     {
         return $this->belongsTo(VetDate::class);
+    }
+
+    // Accessor untuk format waktu yang konsisten
+    public function getJamMulaiFormattedAttribute()
+    {
+        return $this->jam_mulai ? substr($this->jam_mulai, 0, 5) : null; // HH:MM
+    }
+
+    public function getJamSelesaiFormattedAttribute()
+    {
+        return $this->jam_selesai ? substr($this->jam_selesai, 0, 5) : null; // HH:MM
+    }
+
+    // Mutator untuk memastikan format yang benar saat save
+    public function setJamMulaiAttribute($value)
+    {
+        $this->attributes['jam_mulai'] = is_string($value) ? $value :
+            (is_object($value) ? $value->format('H:i:s') : null);
+    }
+
+    public function setJamSelesaiAttribute($value)
+    {
+        $this->attributes['jam_selesai'] = is_string($value) ? $value :
+            (is_object($value) ? $value->format('H:i:s') : null);
     }
 }
