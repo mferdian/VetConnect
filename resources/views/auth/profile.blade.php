@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-gray-100">
+    @section('content')
     <div class="max-w-4xl p-6 mx-auto my-8 bg-white shadow-lg rounded-xl">
         <!-- Back Button -->
         <div class="mb-6">
@@ -130,5 +131,6 @@
             </div>
         </div>
     </div>
+    @endsection
 </body>
 </html>

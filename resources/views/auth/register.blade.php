@@ -8,6 +8,7 @@
 </head>
 <body class="bg-white">
 <div class="flex items-center justify-center min-h-screen px-4 py-8 bg-gray-200">
+    @section('content')
     <div class="flex w-full max-w-4xl overflow-hidden bg-white shadow-lg rounded-3xl">
 
         <!-- Left: Form Section -->
@@ -108,5 +109,6 @@
         </div>
     </div>
 </div>
+    @endsection
 </body>
 </html>
