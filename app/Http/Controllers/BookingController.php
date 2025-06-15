@@ -79,7 +79,7 @@ class BookingController extends Controller
             'keluhan' => 'required|string',
         ]);
 
-         $orderId = self::generateUniqueOrderId();
+        $orderId = self::generateUniqueOrderId();
 
         session(['booking_data' => [
             'user_id' => Auth::id(),
@@ -101,17 +101,17 @@ class BookingController extends Controller
     {
 
         $vetTimes = VetTime::where('vet_date_id', $vetDateId)
-                          ->select('id', 'jam_mulai', 'jam_selesai')
-                          ->get()
-                          ->map(function ($time) {
-                              return [
-                                  'id' => $time->id,
-                                  'jam_mulai' => $time->jam_mulai,
-                                  'jam_selesai' => $time->jam_selesai,
-                                  // Format untuk display (opsional)
-                                  'display_time' => substr($time->jam_mulai, 0, 5) . ' - ' . substr($time->jam_selesai, 0, 5)
-                              ];
-                          });
+            ->select('id', 'jam_mulai', 'jam_selesai')
+            ->get()
+            ->map(function ($time) {
+                return [
+                    'id' => $time->id,
+                    'jam_mulai' => $time->jam_mulai,
+                    'jam_selesai' => $time->jam_selesai,
+                    // Format untuk display (opsional)
+                    'display_time' => substr($time->jam_mulai, 0, 5) . ' - ' . substr($time->jam_selesai, 0, 5)
+                ];
+            });
 
         return response()->json($vetTimes);
     }
@@ -220,10 +220,21 @@ class BookingController extends Controller
     public function history()
     {
         $bookings = Booking::where('user_id', Auth::id())
-                    ->with(['vet', 'vetDate', 'vetTime', 'review'])
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+            ->with(['vet', 'vetDate', 'vetTime', 'review'])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return view('historyPage', compact('bookings'));
+    }
+
+    public function debugTimezone()
+    {
+        return response()->json([
+            'server_timezone' => date_default_timezone_get(),
+            'app_timezone' => config('app.timezone'),
+            'current_time' => now()->format('Y-m-d H:i:s T'),
+            'carbon_now' => Carbon::now()->format('Y-m-d H:i:s T'),
+            'carbon_singapore' => Carbon::now('Asia/Singapore')->format('Y-m-d H:i:s T'),
+        ]);
     }
 }
