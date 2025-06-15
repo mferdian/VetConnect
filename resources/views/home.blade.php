@@ -53,6 +53,7 @@
 
 <body class="bg-gray-50">
     <!-- Navbar -->
+    @extends('layouts.app')
     @include('layouts._navbar')
 
     <!-- Hero Section -->
