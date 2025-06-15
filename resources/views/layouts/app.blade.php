@@ -3,21 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
     <title>@yield('title', 'VetConnect')</title>
-
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    @stack('head') <!-- Untuk custom meta tag dari child -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="flex flex-col min-h-screen bg-gray-100">
+<body class="bg-gray-100">
 
     @include('layouts._navbar')
 
-    <main class="container flex-1 px-4 py-6 mx-auto sm:px-6 lg:px-8">
+    <div class="container mx-auto">
         @yield('content')
-    </main>
+    </div>
 
 </body>
 </html>
