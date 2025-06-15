@@ -6,7 +6,10 @@
     <title>Edit Profile</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+
 <body class="bg-gray-50">
+
+    @section('content')
     <div class="max-w-4xl p-8 mx-auto my-12 bg-white shadow-lg rounded-xl">
         <!-- Back Button -->
         <div class="mb-6">
@@ -147,5 +150,7 @@
             }
         });
     </script>
+    @endsection
 </body>
+
 </html>

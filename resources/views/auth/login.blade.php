@@ -8,6 +8,7 @@
 </head>
 <body class="bg-gray-100">
 <div class="flex items-center justify-center min-h-screen px-4 py-8">
+    @section('content')
     <div class="flex w-full max-w-5xl overflow-hidden bg-white shadow-lg rounded-3xl">
 
         {{-- Kiri: Form login --}}
@@ -78,5 +79,6 @@
         </div>
     </div>
 </div>
+    @endsection
 </body>
 </html>
