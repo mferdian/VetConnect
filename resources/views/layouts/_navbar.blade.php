@@ -47,7 +47,7 @@
                     Login
                 </a>
                 <a class="px-5 py-2.5 text-sm font-medium text-white transition-all duration-300 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl hover:from-emerald-700 hover:to-teal-700 hover:shadow-lg transform hover:-translate-y-0.5" href="{{ route('register') }}">
-                    Get Started
+                    Register
                 </a>
             </div>
         @endguest

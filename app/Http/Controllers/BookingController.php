@@ -45,10 +45,15 @@ class BookingController extends Controller
                 'tanggal' => $date
             ]);
 
+            // PERBAIKAN: Gunakan field yang sesuai dengan model
             for ($hour = 8; $hour < 17; $hour++) {
+                $jamMulai = sprintf('%02d:00:00', $hour);
+                $jamSelesai = sprintf('%02d:00:00', $hour + 1);
+
                 \App\Models\VetTime::create([
                     'vet_date_id' => $vetDate->id,
-                    'jam' => sprintf('%02d:00', $hour)
+                    'jam_mulai' => $jamMulai,
+                    'jam_selesai' => $jamSelesai,
                 ]);
             }
         }
@@ -64,7 +69,6 @@ class BookingController extends Controller
 
         return $randomString;
     }
-
 
     public function store(Request $request)
     {
@@ -95,7 +99,20 @@ class BookingController extends Controller
 
     public function getTimes($vetDateId)
     {
-        $vetTimes = VetTime::where('vet_date_id', $vetDateId)->get();
+
+        $vetTimes = VetTime::where('vet_date_id', $vetDateId)
+                          ->select('id', 'jam_mulai', 'jam_selesai')
+                          ->get()
+                          ->map(function ($time) {
+                              return [
+                                  'id' => $time->id,
+                                  'jam_mulai' => $time->jam_mulai,
+                                  'jam_selesai' => $time->jam_selesai,
+                                  // Format untuk display (opsional)
+                                  'display_time' => substr($time->jam_mulai, 0, 5) . ' - ' . substr($time->jam_selesai, 0, 5)
+                              ];
+                          });
+
         return response()->json($vetTimes);
     }
 
@@ -142,7 +159,7 @@ class BookingController extends Controller
         return view('payment-midtrans', compact('vet', 'snapToken'));
     }
 
-        public function confirmPayment(Request $request)
+    public function confirmPayment(Request $request)
     {
         $paymentStatus = $request->input('status');
 
@@ -162,7 +179,6 @@ class BookingController extends Controller
 
         return redirect()->route('payment.page', ['vet' => $bookingData['vet_id'] ?? null])->with('error', 'Pembayaran gagal, silakan coba lagi.');
     }
-
 
     public function create(Booking $booking)
     {
@@ -200,7 +216,7 @@ class BookingController extends Controller
         return redirect()->route('home')->with('success', 'Review berhasil dikirim!');
     }
 
-// In your BookingController:
+    // In your BookingController:
     public function history()
     {
         $bookings = Booking::where('user_id', Auth::id())
