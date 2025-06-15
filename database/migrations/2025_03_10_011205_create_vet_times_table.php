@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('vet_times', function (Blueprint $table) {
             $table->id();
             $table->foreignId('vet_date_id')->constrained()->cascadeOnDelete();
-            $table->time('jam_mulai');
-            $table->time('jam_selesai');
+            // Menggunakan string untuk kompatibilitas PostgreSQL
+            $table->string('jam_mulai', 8); // Format: HH:MM:SS
+            $table->string('jam_selesai', 8); // Format: HH:MM:SS
             $table->timestamps();
         });
     }
