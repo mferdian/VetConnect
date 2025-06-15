@@ -54,8 +54,8 @@
 <body class="bg-gray-50">
     <!-- Navbar -->
     @extends('layouts.app')
-    @include('layouts._navbar')
 
+    @section('content')
     <!-- Hero Section -->
     <section class="py-20 bg-gradient-to-r from-emerald-50 to-white" x-data="{ show: false }" x-init="setTimeout(() => show = true, 100)">
         <div class="container flex flex-col items-center px-6 mx-auto lg:flex-row lg:space-x-12">
@@ -336,6 +336,7 @@
     </footer>
 
     <script src="/script.js"></script>
+    @endsection
 </body>
 
 </html>
