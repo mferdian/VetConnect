@@ -15,32 +15,16 @@ class AdminMiddleware
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
-{
-        // Check if user is authenticated
-        if (!Auth::check()) {
-            // Untuk Filament, redirect ke halaman login Filament
-            if ($request->is('admin*')) {
-                return redirect()->route('filament.admin.auth.login');
-            }
-            return redirect()->route('login');
+    {
+        // Gunakan guard 'web' karena authGuard di Filament juga pakai 'web'
+        if (!Auth::guard('web')->check()) {
+            return redirect()->route('filament.admin.auth.login');
         }
 
-        // Check if user is admin
-        if (!Auth::user()->is_admin) {
-            // For API requests, return JSON response
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'message' => 'Unauthorized. Admin access required.'
-                ], 403);
-            }
+        $user = Auth::guard('web')->user();
 
-            // For Filament admin routes
-            if ($request->is('admin*')) {
-                abort(403, 'Access denied. Admin privileges required.');
-            }
-
-            // For other web requests
-            abort(403, 'Unauthorized. Admin access required.');
+        if (!$user->is_admin) {
+            abort(403, 'Access denied. Admin privileges required.');
         }
 
         return $next($request);
