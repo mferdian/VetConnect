@@ -7,6 +7,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
@@ -20,7 +21,7 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
-        ],[
+        ], [
             'email.required' => 'Email wajib diisi!',
             'email.email' => 'Masukkan email yang valid!',
             'email.unique' => 'Email ini sudah terdaftar!',
@@ -33,7 +34,7 @@ class AuthController extends Controller
             return redirect('/');
         }
 
-        return back()->with('failed','Email atau Password Salah');
+        return back()->with('failed', 'Email atau Password Salah');
     }
 
     public function showRegisterForm()
@@ -68,8 +69,9 @@ class AuthController extends Controller
 
     public function logout()
     {
-        Auth::logout(Auth::user());
-        return redirect('/');
+        Session::flush();
+        Auth::logout();
+        return redirect('/');   
     }
 
     // public function deleteAccount(Request $request)
