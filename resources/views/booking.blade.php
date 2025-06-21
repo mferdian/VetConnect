@@ -1,16 +1,9 @@
-<!doctype html>
-<html>
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-       @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
+@extends('layouts.app')
+
+@section('title', 'Booking - VetConnect')
+
+@section('content')
 <body class="bg-gray-100">
-
-    <!-- Navbar -->
-    @extends('layouts.app')
-
-    @section('content')
 
     <!-- Hero Section -->
     <section class="container flex flex-col px-6 mx-auto mt-12 md:flex-row">

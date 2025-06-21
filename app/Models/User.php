@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -33,15 +35,29 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
         ];
     }
 
-    public function reviews():HasMany
+    // Method untuk Filament
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // Hanya admin yang bisa akses panel admin
+        return $this->is_admin;
+    }
+
+    // Helper method
+    public function isAdmin(): bool
+    {
+        return $this->is_admin;
+    }
+
+    public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
     }
 
-    public function bookings():HasMany
+    public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class);
     }

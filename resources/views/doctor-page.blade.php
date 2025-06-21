@@ -1,67 +1,8 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VetConnect - Cari Dokter Hewan</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/doctor-page.js'])
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #497D74;
-            --primary-dark: #3b665d;
-            --primary-light: #5a8f85;
-            --accent: #f8c537;
-        }
+@extends('layouts.app')
+@section('title', 'VetConnect - Cari Dokter Hewan')
+@section('content')
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            scroll-behavior: smooth;
-        }
-
-        .btn-primary {
-            background: linear-gradient(to right, var(--primary), var(--primary-dark));
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-
-        .text-gradient {
-            background: linear-gradient(to right, var(--primary), var(--primary-dark));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .rating-star {
-            color: #fbbf24;
-        }
-
-        .specialization-badge {
-            background-color: var(--primary-light);
-            color: white;
-        }
-    </style>
-</head>
 <body class="bg-gray-50">
-    @extends('layouts.app')
-
-    @section('content')
         <!-- Hero Section -->
 
             <div class="container px-6 mx-auto mt-20 text-center">
