@@ -16,7 +16,7 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Gunakan guard 'web' karena authGuard di Filament juga pakai 'web'
+
         if (!Auth::guard('admin')->check()) {
             return redirect()->route('filament.admin.auth.login');
         }
