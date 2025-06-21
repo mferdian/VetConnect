@@ -1,20 +1,9 @@
-<!doctype html>
-<html lang="id">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Artikel - VetConnect</title>
-
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-
+@extends('layouts.app')
+@section('title', 'Artikel - VetConnect')
+@section('content')
 <body class="bg-gray-100">
 
     <!-- Navbar -->
-    @extends('layouts.app')
-
-    @section('content')
     <!-- Artikel Section -->
     <section class="container px-6 mx-auto mt-12">
         <div class="space-y-8">

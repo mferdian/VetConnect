@@ -8,8 +8,6 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
-
-
 // ==============================
 // GUEST ROUTES
 // ==============================
@@ -17,7 +15,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
-
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
 });
@@ -27,7 +24,6 @@ Route::middleware('guest')->group(function () {
 // ==============================
 
 Route::middleware('auth')->group(function () {
-    // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('/delete-account', [AuthController::class, 'deleteAccount'])->name('delete-account');
 
@@ -38,24 +34,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Booking & Payment
-    Route::get('/booking/{id}', [BookingController::class, 'bookingDetail'])->name('booking.show'); // Halaman pilih dokter & booking
-    Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');       // Submit booking
-
-    // Payment Pages
-    Route::get('/payment/{vet}', [BookingController::class, 'show'])->name('payment.page');           // Halaman Midtrans Payment
-    Route::post('/payment/confirm', [BookingController::class, 'confirmPayment'])->name('payment.confirm'); // Konfirmasi pembayaran
+    Route::get('/booking/{id}', [BookingController::class, 'bookingDetail'])->name('booking.show');
+    Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
+    Route::get('/payment/{vet}', [BookingController::class, 'show'])->name('payment.page');
+    Route::post('/payment/confirm', [BookingController::class, 'confirmPayment'])->name('payment.confirm');
 
     // Transaction History
-    Route::get('/history', [BookingController::class, 'history'])->name('history');                   // Riwayat pembayaran user
-    Route::get('/my-orders', [NavigationController::class, 'myorder'])->name('myorder.index');         // Halaman orderan user (opsional)
+    Route::get('/history', [BookingController::class, 'history'])->name('history');
+    Route::get('/my-orders', [NavigationController::class, 'myorder'])->name('myorder.index');
 
     // Article
     Route::get('/articles/{id}', [ArticleController::class, 'show'])->name('articles.show');
 
-    // DEBUG ROUTE - HAPUS SETELAH TESTING
-    Route::get('/debug-timezone', [BookingController::class, 'debugTimezone']);
-
-// Review Routes (going through the "review" middleware)
+    // Review Routes
     Route::middleware(['review'])->group(function () {
         Route::get('/review/create/{booking}', [ReviewController::class, 'create'])->name('review.create');
     });
@@ -71,4 +62,6 @@ Route::get('/doctor', [NavigationController::class, 'doctors'])->name('doctor');
 Route::get('/articles', [ArticleController::class, 'index'])->name('articles');
 Route::get('/aplication', [NavigationController::class, 'aplication'])->name('aplication');
 Route::get('/detailArticle', [NavigationController::class, 'detailArticle'])->name('detailArticle');
-Route::get('/booking/get-times/{vetDateId}', [BookingController::class, 'getTimes'])->name('booking.getTimes'); // Ambil waktu available
+Route::get('/booking/get-times/{vetDateId}', [BookingController::class, 'getTimes'])->name('booking.getTimes');
+
+
