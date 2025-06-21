@@ -9,19 +9,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AdminMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next): Response
     {
-
-        if (!Auth::guard('admin')->check()) {
+        // Gunakan guard default, bukan guard admin
+        if (!Auth::check()) {
             return redirect()->route('filament.admin.auth.login');
         }
 
-        $user = Auth::guard('admin')->user();
+        $user = Auth::user();
 
         if (!$user->is_admin) {
             abort(403, 'Access denied. Admin privileges required.');
