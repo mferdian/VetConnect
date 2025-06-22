@@ -41,14 +41,14 @@
             </div>
 
             <!-- Success Message -->
-            <div class="p-4 mb-6 border border-blue-200 rounded-lg bg-blue-50">
+            <div class="p-4 mb-6 border rounded-lg border-emerald-200 bg-emerald-50">
                 <div class="flex items-center justify-center mb-2">
-                    <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    <span class="text-sm font-medium text-blue-800">Langkah Selanjutnya</span>
+                    <span class="text-sm font-medium text-emerald-800">Langkah Selanjutnya</span>
                 </div>
-                <p class="text-sm text-blue-700">
+                <p class="text-sm text-emerald-700">
                     Booking Anda telah dikonfirmasi. Silakan tunggu informasi lebih lanjut dari dokter hewan.
                 </p>
             </div>
@@ -85,40 +85,6 @@
         </div>
     </div>
 
-    <!-- Confetti Animation CSS -->
-    <style>
-        @keyframes confetti-fall {
-            0% {
-                transform: translateY(-100vh) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(720deg);
-                opacity: 0;
-            }
-        }
-
-        .confetti {
-            position: fixed;
-            top: -10px;
-            left: 50%;
-            width: 10px;
-            height: 10px;
-            background: #f39c12;
-            animation: confetti-fall 3s linear infinite;
-        }
-
-        .confetti:nth-child(1) { left: 10%; animation-delay: 0s; background: #e74c3c; }
-        .confetti:nth-child(2) { left: 20%; animation-delay: 0.2s; background: #3498db; }
-        .confetti:nth-child(3) { left: 30%; animation-delay: 0.4s; background: #2ecc71; }
-        .confetti:nth-child(4) { left: 40%; animation-delay: 0.6s; background: #f39c12; }
-        .confetti:nth-child(5) { left: 50%; animation-delay: 0.8s; background: #9b59b6; }
-        .confetti:nth-child(6) { left: 60%; animation-delay: 1s; background: #e67e22; }
-        .confetti:nth-child(7) { left: 70%; animation-delay: 1.2s; background: #1abc9c; }
-        .confetti:nth-child(8) { left: 80%; animation-delay: 1.4s; background: #e91e63; }
-        .confetti:nth-child(9) { left: 90%; animation-delay: 1.6s; background: #34495e; }
-    </style>
-
     <!-- Confetti Elements -->
     <div class="confetti"></div>
     <div class="confetti"></div>
@@ -134,10 +100,6 @@
     <script>
         // Play success sound if available
         document.addEventListener('DOMContentLoaded', function() {
-            // Optional: Add success sound
-            // const audio = new Audio('/sounds/success.mp3');
-            // audio.play().catch(e => console.log('Audio play failed:', e));
-
             // Show success message briefly
             setTimeout(() => {
                 const successIcon = document.querySelector('.animate-bounce');
