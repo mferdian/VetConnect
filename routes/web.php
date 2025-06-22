@@ -7,7 +7,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\MidtransWebhookController;
 use App\Http\Controllers\ReviewController;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 // ==============================
@@ -53,6 +55,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/review/create/{booking}', [ReviewController::class, 'create'])->name('review.create');
     });
     Route::post('/review/store', [ReviewController::class, 'store'])->name('review.store');
+
+
+    Route::get('/payment/finish/{booking}', [BookingController::class, 'paymentFinish'])->name('payment.finish');
 });
 
 // ==============================
@@ -66,4 +71,19 @@ Route::get('/aplication', [NavigationController::class, 'aplication'])->name('ap
 Route::get('/detailArticle', [NavigationController::class, 'detailArticle'])->name('detailArticle');
 Route::get('/booking/get-times/{vetDateId}', [BookingController::class, 'getTimes'])->name('booking.getTimes');
 Route::post('/midtrans/webhook', [MidtransWebhookController::class, 'handle'])->name('midtrans.webhook');
-Route::get('/payment/finish/{booking}', [BookingController::class, 'paymentFinish'])->name('payment.finish');
+
+
+Route::any('/midtrans/test', function(HttpRequest $request) {
+    Log::info('Midtrans test endpoint hit', [
+        'method' => $request->method(),
+        'headers' => $request->headers->all(),
+        'body' => $request->all()
+    ]);
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Endpoint accessible',
+        'method' => $request->method(),
+        'timestamp' => now()
+    ], 200);
+});
