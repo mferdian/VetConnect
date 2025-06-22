@@ -6,6 +6,7 @@ use App\Http\Controllers\NavigationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ReviewController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 // ==============================
@@ -63,5 +64,6 @@ Route::get('/articles', [ArticleController::class, 'index'])->name('articles');
 Route::get('/aplication', [NavigationController::class, 'aplication'])->name('aplication');
 Route::get('/detailArticle', [NavigationController::class, 'detailArticle'])->name('detailArticle');
 Route::get('/booking/get-times/{vetDateId}', [BookingController::class, 'getTimes'])->name('booking.getTimes');
-Route::match(['get', 'post'],'/midtrans/payment/notification', [BookingController::class, 'webhookMidtrans'])->name('midtrans.payment.notification');
+Route::post('/midtrans/payment/notification', [BookingController::class, 'webhookMidtrans'])
+    ->withoutMiddleware([VerifyCsrfToken::class]);
 
