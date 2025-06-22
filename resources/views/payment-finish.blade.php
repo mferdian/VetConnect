@@ -1,68 +1,153 @@
 @extends('layouts.app')
 
-@section('title', 'Payment Status- VetConnect')
+@section('title', 'Payment Success - VetConnect')
 @section('content')
 
-<body class="bg-gray-100">
-    <div class="flex items-center justify-center min-h-screen">
-        <div class="w-full max-w-md p-8 text-center bg-white rounded-lg shadow-md">
+<body class="bg-gradient-to-br from-green-50 to-emerald-50">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="w-full max-w-md p-8 text-center bg-white shadow-xl rounded-2xl">
+            <!-- Success Icon with Animation -->
             <div class="mb-6">
-                <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full">
-                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <div class="flex items-center justify-center w-20 h-20 mx-auto mb-4 bg-green-100 rounded-full animate-bounce">
+                    <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
                     </svg>
                 </div>
-                <h1 class="mb-2 text-2xl font-bold text-gray-800">Pembayaran Sedang Diproses</h1>
+                <h1 class="mb-2 text-3xl font-bold text-gray-800">Pembayaran Berhasil!</h1>
                 <p class="text-gray-600">
-                    Terima kasih! Kami sedang memverifikasi pembayaran Anda.
+                    Terima kasih! Pembayaran Anda telah berhasil diproses.
                 </p>
             </div>
 
-            <div class="p-4 mb-6 rounded-lg bg-gray-50">
-                <div class="mb-2 text-sm text-gray-600">Order ID:</div>
-                <div class="font-mono text-lg font-bold">{{ $booking->order_id }}</div>
-            </div>
+            <!-- Order Details Card -->
+            <div class="p-6 mb-6 border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl">
+                <div class="mb-3">
+                    <div class="text-sm font-medium text-green-700">Order ID:</div>
+                    <div class="font-mono text-lg font-bold text-green-800">{{ $booking->order_id }}</div>
+                </div>
 
-            <div class="space-y-3">
-                <p class="text-sm text-gray-600">
-                    Status pembayaran akan diperbarui secara otomatis.
-                    Anda akan menerima notifikasi setelah pembayaran dikonfirmasi.
-                </p>
-
-                <div class="flex space-x-3">
-                    <a href="{{ route('myorder.index') }}"
-                       class="flex-1 px-4 py-2 text-white transition duration-200 bg-blue-600 rounded-lg hover:bg-blue-700">
-                        Lihat Pesanan Saya
-                    </a>
-                    <a href="{{ route('home') }}"
-                       class="flex-1 px-4 py-2 text-gray-700 transition duration-200 bg-gray-300 rounded-lg hover:bg-gray-400">
-                        Kembali ke Home
-                    </a>
+                <div class="grid grid-cols-2 gap-4 mt-4 text-sm">
+                    <div>
+                        <span class="text-gray-600">Total Bayar:</span>
+                        <div class="font-semibold text-gray-800">Rp {{ number_format($booking->total_harga, 0, ',', '.') }}</div>
+                    </div>
+                    <div>
+                        <span class="text-gray-600">Status:</span>
+                        <div class="inline-flex px-2 py-1 text-xs font-medium text-green-800 bg-green-200 rounded-full">
+                            Berhasil
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Auto refresh untuk check status -->
-            <script>
-                // Auto refresh setiap 10 detik untuk check status
-                let refreshCount = 0;
-                const maxRefresh = 18; // 3 menit total (18 x 10 detik)
+            <!-- Success Message -->
+            <div class="p-4 mb-6 border border-blue-200 rounded-lg bg-blue-50">
+                <div class="flex items-center justify-center mb-2">
+                    <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="text-sm font-medium text-blue-800">Langkah Selanjutnya</span>
+                </div>
+                <p class="text-sm text-blue-700">
+                    Booking Anda telah dikonfirmasi. Silakan tunggu informasi lebih lanjut dari dokter hewan.
+                </p>
+            </div>
 
-                const checkStatus = () => {
-                    if (refreshCount < maxRefresh) {
-                        setTimeout(() => {
-                            refreshCount++;
-                            window.location.reload();
-                        }, 10000);
-                    }
-                };
+            <!-- Action Buttons -->
+            <div class="space-y-3">
+                <a href="{{ route('myorder.index') }}"
+                   class="block w-full px-6 py-3 font-semibold text-white transition duration-300 transform rounded-lg bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 hover:scale-105">
+                    <div class="flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                        Lihat Pesanan Saya
+                    </div>
+                </a>
 
-                // Mulai auto refresh jika status masih pending
-                @if($booking->status_bayar === 'pending')
-                    checkStatus();
-                @endif
-            </script>
+                <a href="{{ route('home') }}"
+                   class="block w-full px-6 py-3 font-semibold text-gray-700 transition duration-300 transform bg-gray-100 rounded-lg hover:bg-gray-200 hover:scale-105">
+                    <div class="flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                        </svg>
+                        Kembali ke Home
+                    </div>
+                </a>
+            </div>
+
+            <!-- Additional Info -->
+            <div class="pt-6 mt-6 border-t border-gray-200">
+                <p class="text-xs text-gray-500">
+                    Jika ada pertanyaan, silakan hubungi customer service kami
+                </p>
+            </div>
         </div>
     </div>
+
+    <!-- Confetti Animation CSS -->
+    <style>
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .confetti {
+            position: fixed;
+            top: -10px;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background: #f39c12;
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        .confetti:nth-child(1) { left: 10%; animation-delay: 0s; background: #e74c3c; }
+        .confetti:nth-child(2) { left: 20%; animation-delay: 0.2s; background: #3498db; }
+        .confetti:nth-child(3) { left: 30%; animation-delay: 0.4s; background: #2ecc71; }
+        .confetti:nth-child(4) { left: 40%; animation-delay: 0.6s; background: #f39c12; }
+        .confetti:nth-child(5) { left: 50%; animation-delay: 0.8s; background: #9b59b6; }
+        .confetti:nth-child(6) { left: 60%; animation-delay: 1s; background: #e67e22; }
+        .confetti:nth-child(7) { left: 70%; animation-delay: 1.2s; background: #1abc9c; }
+        .confetti:nth-child(8) { left: 80%; animation-delay: 1.4s; background: #e91e63; }
+        .confetti:nth-child(9) { left: 90%; animation-delay: 1.6s; background: #34495e; }
+    </style>
+
+    <!-- Confetti Elements -->
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+
+    <!-- Success Sound Effect (Optional) -->
+    <script>
+        // Play success sound if available
+        document.addEventListener('DOMContentLoaded', function() {
+            // Optional: Add success sound
+            // const audio = new Audio('/sounds/success.mp3');
+            // audio.play().catch(e => console.log('Audio play failed:', e));
+
+            // Show success message briefly
+            setTimeout(() => {
+                const successIcon = document.querySelector('.animate-bounce');
+                if (successIcon) {
+                    successIcon.classList.remove('animate-bounce');
+                    successIcon.classList.add('animate-pulse');
+                }
+            }, 2000);
+        });
+    </script>
 </body>
 
 @endsection
