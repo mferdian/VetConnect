@@ -11,15 +11,16 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // Gunakan guard default, bukan guard admin
-        if (!Auth::check()) {
+        $guard = config('filament.auth.guard', 'web');
+
+        if (!Auth::guard($guard)->check()) {
             return redirect()->route('filament.admin.auth.login');
         }
 
-        $user = Auth::user();
+        $user = Auth::guard($guard)->user();
 
         if (!$user->is_admin) {
-            abort(403, 'Access denied. Admin privileges required.');
+            abort(403, 'Access denied. Admin privileges required.');
         }
 
         return $next($request);
