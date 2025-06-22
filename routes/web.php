@@ -41,7 +41,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/booking/{id}', [BookingController::class, 'bookingDetail'])->name('booking.show');
     Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
     Route::get('/payment/{vet}', [BookingController::class, 'show'])->name('payment.page');
-    Route::post('/payment/confirm', [BookingController::class, 'confirmPayment'])->name('payment.confirm');
 
     // Transaction History
     Route::get('/history', [BookingController::class, 'history'])->name('history');

@@ -174,37 +174,9 @@ public function store(Request $request)
 
     public function paymentFinish(Booking $booking)
     {
-        // Halaman finish setelah payment
-        // Status akan diupdate otomatis via webhook
-
         session()->forget('booking_data');
 
         return view('payment-finish', compact('booking'));
-    }
-
-     public function confirmPayment(Request $request)
-    {
-        // Method ini bisa dihapus atau digunakan untuk fallback manual
-        // Karena sekarang menggunakan webhook
-
-        $paymentStatus = $request->input('status');
-        $bookingData = session('booking_data');
-
-        if ($paymentStatus === 'berhasil' && $bookingData) {
-            $booking = Booking::find($bookingData['booking_id']);
-
-            if ($booking && $booking->status_bayar === 'pending') {
-                $booking->update([
-                    'status' => 'confirmed',
-                    'status_bayar' => 'berhasil',
-                ]);
-            }
-
-            session()->forget('booking_data');
-            return redirect()->route('myorder.index')->with('success', 'Booking berhasil! Silakan cek pesanan Anda di My Orders.');
-        }
-
-        return redirect()->route('payment.page', ['vet' => $bookingData['vet_id'] ?? null])->with('error', 'Pembayaran gagal, silakan coba lagi.');
     }
 
     public function create(Booking $booking)
@@ -264,47 +236,5 @@ public function store(Request $request)
             'carbon_singapore' => Carbon::now('Asia/Singapore')->format('Y-m-d H:i:s T'),
         ]);
     }
-    public function webhookMidtrans(Request $request)
-    {
-        // Log notifikasi masuk (untuk debug)
-        Log::info('Midtrans Webhook Received', $request->all());
 
-        $serverKey = config('midtrans.serverKey');
-        $orderId = $request->order_id;
-        $statusCode = $request->status_code;
-        $grossAmount = $request->gross_amount;
-        $signatureKey = $request->signature_key;
-
-        // Verifikasi Signature Key
-        $expectedSignature = hash('sha512', $orderId . $statusCode . $grossAmount . $serverKey);
-        if ($signatureKey !== $expectedSignature) {
-            Log::warning('Invalid Signature Key from Midtrans.');
-            return response()->json(['message' => 'Invalid Signature'], 403);
-        }
-
-        $booking = Booking::where('order_id', $orderId)->first();
-
-        if (!$booking) {
-            Log::error("Booking not found for order_id: $orderId");
-            return response()->json(['message' => 'Booking not found'], 404);
-        }
-
-        $transactionStatus = $request->transaction_status;
-
-        // Update status_bayar dan status berdasarkan notifikasi dari Midtrans
-        if ($transactionStatus === 'settlement') {
-            $booking->status_bayar = 'berhasil';
-            $booking->status = 'confirmed';
-        } elseif ($transactionStatus === 'pending') {
-            $booking->status_bayar = 'pending';
-            $booking->status = 'pending';
-        } elseif (in_array($transactionStatus, ['expire', 'cancel', 'deny'])) {
-            $booking->status_bayar = 'gagal';
-            $booking->status = 'canceled';
-        }
-
-        $booking->save();
-
-        return response()->json(['message' => 'Booking status updated']);
-    }
 }
