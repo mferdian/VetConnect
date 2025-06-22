@@ -42,7 +42,7 @@ return [
         ],
         'admin' => [
             'driver' => 'session',
-            'provider' => 'users', // menggunakan provider users yang sama
+            'provider' => 'users',
         ],
     ],
 
