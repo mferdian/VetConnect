@@ -182,30 +182,30 @@ public function store(Request $request)
         return view('payment-finish', compact('booking'));
     }
 
-    //  public function confirmPayment(Request $request)
-    // {
-    //     // Method ini bisa dihapus atau digunakan untuk fallback manual
-    //     // Karena sekarang menggunakan webhook
+     public function confirmPayment(Request $request)
+    {
+        // Method ini bisa dihapus atau digunakan untuk fallback manual
+        // Karena sekarang menggunakan webhook
 
-    //     $paymentStatus = $request->input('status');
-    //     $bookingData = session('booking_data');
+        $paymentStatus = $request->input('status');
+        $bookingData = session('booking_data');
 
-    //     if ($paymentStatus === 'berhasil' && $bookingData) {
-    //         $booking = Booking::find($bookingData['booking_id']);
+        if ($paymentStatus === 'berhasil' && $bookingData) {
+            $booking = Booking::find($bookingData['booking_id']);
 
-    //         if ($booking && $booking->status_bayar === 'pending') {
-    //             $booking->update([
-    //                 'status' => 'confirmed',
-    //                 'status_bayar' => 'berhasil',
-    //             ]);
-    //         }
+            if ($booking && $booking->status_bayar === 'pending') {
+                $booking->update([
+                    'status' => 'confirmed',
+                    'status_bayar' => 'berhasil',
+                ]);
+            }
 
-    //         session()->forget('booking_data');
-    //         return redirect()->route('myorder.index')->with('success', 'Booking berhasil! Silakan cek pesanan Anda di My Orders.');
-    //     }
+            session()->forget('booking_data');
+            return redirect()->route('myorder.index')->with('success', 'Booking berhasil! Silakan cek pesanan Anda di My Orders.');
+        }
 
-    //     return redirect()->route('payment.page', ['vet' => $bookingData['vet_id'] ?? null])->with('error', 'Pembayaran gagal, silakan coba lagi.');
-    // }
+        return redirect()->route('payment.page', ['vet' => $bookingData['vet_id'] ?? null])->with('error', 'Pembayaran gagal, silakan coba lagi.');
+    }
 
     public function create(Booking $booking)
     {

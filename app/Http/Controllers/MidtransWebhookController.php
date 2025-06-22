@@ -12,6 +12,20 @@ class MidtransWebhookController extends Controller
 {
     public function handle(Request $request)
     {
+        // Log semua request yang masuk untuk debugging
+        Log::info('Midtrans webhook received', [
+            'method' => $request->method(),
+            'headers' => $request->headers->all(),
+            'body' => $request->all(),
+            'raw_body' => $request->getContent()
+        ]);
+
+        // Jika tidak ada data, kembalikan response sukses
+        if (empty($request->all()) && empty($request->getContent())) {
+            Log::info('Empty webhook request - returning success for test');
+            return response()->json(['status' => 'success'], 200);
+        }
+
         try {
             // Setup Midtrans Config
             Config::$serverKey = config('midtrans.serverKey');
