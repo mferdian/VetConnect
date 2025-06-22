@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        <form id="payment-form" action="{{ route('payment.confirm') }}" method="POST" class="mt-8">
+        <form id="payment-form" action="{{ route('payment.finish') }}" method="POST" class="mt-8">
             @csrf
             <input type="hidden" name="vet_id" value="{{ $vet->id }}">
             {{-- Bisa tambah hidden input untuk order_id / booking_id jika mau --}}
