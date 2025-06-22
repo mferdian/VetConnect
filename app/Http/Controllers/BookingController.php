@@ -71,7 +71,7 @@ class BookingController extends Controller
         return $randomString;
     }
 
-    public function store(Request $request)
+public function store(Request $request)
     {
         $request->validate([
             'vet_id' => 'required|exists:vets,id',
@@ -82,7 +82,8 @@ class BookingController extends Controller
 
         $orderId = self::generateUniqueOrderId();
 
-        session(['booking_data' => [
+        // Simpan booking langsung ke database dengan status pending
+        $booking = Booking::create([
             'user_id' => Auth::id(),
             'vet_id' => $request->vet_id,
             'vet_date_id' => $request->vet_date_id,
@@ -93,6 +94,13 @@ class BookingController extends Controller
             'status_bayar' => 'pending',
             'metode_pembayaran' => 'transfer_bank',
             'order_id' => $orderId,
+        ]);
+
+        // Simpan data ke session untuk payment page
+        session(['booking_data' => [
+            'booking_id' => $booking->id,
+            'order_id' => $orderId,
+            'total_harga' => $request->harga,
         ]]);
 
         return redirect()->route('payment.page', ['vet' => $request->vet_id]);
@@ -117,14 +125,19 @@ class BookingController extends Controller
         return response()->json($vetTimes);
     }
 
-    public function show($vetId)
+        public function show($vetId)
     {
         $vet = Vet::findOrFail($vetId);
-
         $bookingData = session('booking_data');
 
         if (!$bookingData) {
             return redirect()->route('home')->with('error', 'Data booking tidak ditemukan.');
+        }
+
+        // Ambil booking dari database
+        $booking = Booking::find($bookingData['booking_id']);
+        if (!$booking) {
+            return redirect()->route('home')->with('error', 'Booking tidak ditemukan.');
         }
 
         // Midtrans Setup
@@ -133,53 +146,66 @@ class BookingController extends Controller
         Config::$isSanitized = true;
         Config::$is3ds = true;
 
-        // Kalau sudah ada Snap Token di session, pakai itu
-        if (isset($bookingData['snap_token']) && !empty($bookingData['snap_token'])) {
-            $snapToken = $bookingData['snap_token'];
-        } else {
-            // Kalau belum ada, baru generate Snap Token baru
-            $params = [
-                'transaction_details' => [
-                    'order_id' => $bookingData['order_id'],
-                    'gross_amount' => $bookingData['total_harga'],
-                ],
-                'customer_details' => [
-                    'first_name' => Auth::user()->name,
-                    'email' => Auth::user()->email,
-                ],
-            ];
+        // Generate Snap Token
+        $params = [
+            'transaction_details' => [
+                'order_id' => $booking->order_id,
+                'gross_amount' => $booking->total_harga,
+            ],
+            'customer_details' => [
+                'first_name' => Auth::user()->name,
+                'email' => Auth::user()->email,
+            ],
+            'callbacks' => [
+                'finish' => route('payment.finish', ['booking' => $booking->id])
+            ]
+        ];
 
+        try {
             $snapToken = Snap::getSnapToken($params);
-
-            // Update session dengan snap_token
-            session(['booking_data' => array_merge($bookingData, [
-                'snap_token' => $snapToken,
-            ])]);
+            Log::info('Snap token generated for booking: ' . $booking->order_id);
+        } catch (\Exception $e) {
+            Log::error('Error generating snap token: ' . $e->getMessage());
+            return redirect()->route('home')->with('error', 'Gagal membuat pembayaran. Silakan coba lagi.');
         }
 
-        return view('payment-midtrans', compact('vet', 'snapToken'));
+        return view('payment-midtrans', compact('vet', 'snapToken', 'booking'));
     }
 
-    public function confirmPayment(Request $request)
+    public function paymentFinish(Booking $booking)
     {
-        $paymentStatus = $request->input('status');
+        // Halaman finish setelah payment
+        // Status akan diupdate otomatis via webhook
 
-        $bookingData = session('booking_data');
+        session()->forget('booking_data');
 
-        if ($paymentStatus === 'berhasil' && $bookingData) {
-            Booking::create(array_merge($bookingData, [
-                'status' => 'confirmed',
-                'status_bayar' => 'berhasil',
-            ]));
-
-            session()->forget('booking_data');
-
-            // Setelah pembayaran berhasil, redirect ke riwayat booking
-            return redirect()->route('myorder.index')->with('success', 'Booking berhasil! Silakan cek pesanan Anda di My Orders.');
-        }
-
-        return redirect()->route('payment.page', ['vet' => $bookingData['vet_id'] ?? null])->with('error', 'Pembayaran gagal, silakan coba lagi.');
+        return view('payment-finish', compact('booking'));
     }
+
+    //  public function confirmPayment(Request $request)
+    // {
+    //     // Method ini bisa dihapus atau digunakan untuk fallback manual
+    //     // Karena sekarang menggunakan webhook
+
+    //     $paymentStatus = $request->input('status');
+    //     $bookingData = session('booking_data');
+
+    //     if ($paymentStatus === 'berhasil' && $bookingData) {
+    //         $booking = Booking::find($bookingData['booking_id']);
+
+    //         if ($booking && $booking->status_bayar === 'pending') {
+    //             $booking->update([
+    //                 'status' => 'confirmed',
+    //                 'status_bayar' => 'berhasil',
+    //             ]);
+    //         }
+
+    //         session()->forget('booking_data');
+    //         return redirect()->route('myorder.index')->with('success', 'Booking berhasil! Silakan cek pesanan Anda di My Orders.');
+    //     }
+
+    //     return redirect()->route('payment.page', ['vet' => $bookingData['vet_id'] ?? null])->with('error', 'Pembayaran gagal, silakan coba lagi.');
+    // }
 
     public function create(Booking $booking)
     {
