@@ -13,6 +13,11 @@ class AdminMiddleware
     {
         $guard = config('filament.auth.guard', 'web');
 
+        // Lewatkan middleware jika sedang mengakses halaman login
+        if ($request->routeIs('filament.admin.auth.login')) {
+            return $next($request);
+        }
+
         if (!Auth::guard($guard)->check()) {
             return redirect()->route('filament.admin.auth.login');
         }
@@ -20,7 +25,7 @@ class AdminMiddleware
         $user = Auth::guard($guard)->user();
 
         if (!$user->is_admin) {
-            abort(403, 'Access denied. Admin privileges required.');
+            abort(403, 'Access denied. Admin privileges required.');
         }
 
         return $next($request);
