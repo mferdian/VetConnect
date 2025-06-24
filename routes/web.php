@@ -14,21 +14,6 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 // ==============================
-// WEBHOOK ROUTES (Prioritas tinggi, tanpa middleware)
-// ==============================
-Route::prefix('api/webhook')->group(function () {
-    // Booking webhooks
-    Route::post('/booking/create', [BookingWebhookController::class, 'handleBookingWebhook'])
-        ->name('webhook.booking.create');
-    Route::post('/booking/update-status', [BookingWebhookController::class, 'updateBookingStatus'])
-        ->name('webhook.booking.update-status');
-
-    // Midtrans webhook (jika ada)
-    Route::post('/midtrans/notification', [MidtransWebhookController::class, 'handle'])
-        ->name('webhook.midtrans.notification');
-});
-
-// ==============================
 // GUEST ROUTES
 // ==============================
 Route::middleware('guest')->group(function () {
@@ -78,6 +63,9 @@ Route::middleware('auth')->group(function () {
         });
         Route::post('/store', [ReviewController::class, 'store'])->name('store');
     });
+
+    Route::get('/payment/status/{booking}', [BookingController::class, 'checkPaymentStatus'])
+        ->name('payment.status');
 });
 
 // ==============================
@@ -92,3 +80,6 @@ Route::get('/detailArticle', [NavigationController::class, 'detailArticle'])->na
 // Public AJAX endpoints (bisa diakses tanpa auth jika diperlukan)
 Route::get('/booking/get-times/{vetDateId}', [BookingController::class, 'getTimes'])
     ->name('public.booking.getTimes');
+
+Route::post('/midtrans/webhook', [MidtransWebhookController::class, 'handle'])
+    ->name('midtrans.webhook');
