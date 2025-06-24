@@ -56,7 +56,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/review/store', [ReviewController::class, 'store'])->name('review.store');
 
 
-    Route::get('/payment/finish/{booking}', [BookingController::class, 'paymentFinish'])->name('payment.finish');
 });
 
 // ==============================
@@ -70,6 +69,7 @@ Route::get('/aplication', [NavigationController::class, 'aplication'])->name('ap
 Route::get('/detailArticle', [NavigationController::class, 'detailArticle'])->name('detailArticle');
 Route::get('/booking/get-times/{vetDateId}', [BookingController::class, 'getTimes'])->name('booking.getTimes');
 Route::post('/midtrans/webhook', [MidtransWebhookController::class, 'handle'])->name('midtrans.webhook');
+Route::get('/payment/finish/{booking}', [BookingController::class, 'paymentFinish'])->name('payment.finish');
 
 
 Route::any('/midtrans/test', function(HttpRequest $request) {
