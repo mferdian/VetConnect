@@ -12,6 +12,7 @@ use App\Models\VetTime;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
@@ -71,7 +72,7 @@ class BookingController extends Controller
         return $randomString;
     }
 
-public function store(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'vet_id' => 'required|exists:vets,id',
@@ -80,30 +81,70 @@ public function store(Request $request)
             'keluhan' => 'required|string',
         ]);
 
-        $orderId = self::generateUniqueOrderId();
+        try {
+            DB::beginTransaction();
 
-        // Simpan booking langsung ke database dengan status pending
-        $booking = Booking::create([
-            'user_id' => Auth::id(),
-            'vet_id' => $request->vet_id,
-            'vet_date_id' => $request->vet_date_id,
-            'vet_time_id' => $request->vet_time_id,
-            'keluhan' => $request->keluhan,
-            'total_harga' => $request->harga,
-            'status' => 'pending',
-            'status_bayar' => 'pending',
-            'metode_pembayaran' => 'transfer_bank',
-            'order_id' => $orderId,
-        ]);
+            // Cek apakah waktu masih tersedia
+            $vetTime = VetTime::where('id', $request->vet_time_id)
+                ->where('vet_date_id', $request->vet_date_id)
+                ->first();
 
-        // Simpan data ke session untuk payment page
-        session(['booking_data' => [
-            'booking_id' => $booking->id,
-            'order_id' => $orderId,
-            'total_harga' => $request->harga,
-        ]]);
+            if (!$vetTime) {
+                return redirect()->back()->with('error', 'Waktu yang dipilih tidak tersedia');
+            }
 
-        return redirect()->route('payment.page', ['vet' => $request->vet_id]);
+            // Cek apakah sudah ada booking untuk waktu yang sama
+            $existingBooking = Booking::where('vet_date_id', $request->vet_date_id)
+                ->where('vet_time_id', $request->vet_time_id)
+                ->whereIn('status', ['confirmed', 'pending'])
+                ->first();
+
+            if ($existingBooking) {
+                return redirect()->back()->with('error', 'Waktu tersebut sudah dibooking');
+            }
+
+            $orderId = self::generateUniqueOrderId();
+
+            // Ambil harga dari tabel vet
+            $vet = Vet::findOrFail($request->vet_id);
+            $totalHarga = $vet->harga + 5000; // Tambah biaya admin
+
+            // Simpan booking langsung ke database dengan status pending
+            $booking = Booking::create([
+                'user_id' => Auth::id(),
+                'vet_id' => $request->vet_id,
+                'vet_date_id' => $request->vet_date_id,
+                'vet_time_id' => $request->vet_time_id,
+                'keluhan' => $request->keluhan,
+                'total_harga' => $totalHarga,
+                'status' => 'pending',
+                'status_bayar' => 'pending',
+                'metode_pembayaran' => 'transfer_bank',
+                'order_id' => $orderId,
+            ]);
+
+            DB::commit();
+
+            Log::info('Booking created successfully', [
+                'booking_id' => $booking->id,
+                'order_id' => $orderId,
+                'user_id' => Auth::id(),
+                'vet_id' => $request->vet_id
+            ]);
+
+            return redirect()->route('payment.page', ['vet' => $request->vet_id]);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            Log::error('Booking creation failed', [
+                'error' => $e->getMessage(),
+                'user_id' => Auth::id(),
+                'vet_id' => $request->vet_id
+            ]);
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat membuat booking');
+        }
     }
 
     public function getTimes($vetDateId)
@@ -125,58 +166,79 @@ public function store(Request $request)
         return response()->json($vetTimes);
     }
 
-        public function show($vetId)
+    public function show(Vet $vet)
     {
-        $vet = Vet::findOrFail($vetId);
-        $bookingData = session('booking_data');
-
-        if (!$bookingData) {
-            return redirect()->route('home')->with('error', 'Data booking tidak ditemukan.');
-        }
-
-        // Ambil booking dari database
-        $booking = Booking::find($bookingData['booking_id']);
-        if (!$booking) {
-            return redirect()->route('home')->with('error', 'Booking tidak ditemukan.');
-        }
-
-        // Midtrans Setup
-        Config::$serverKey = config('midtrans.serverKey');
-        Config::$isProduction = config('midtrans.isProduction');
-        Config::$isSanitized = true;
-        Config::$is3ds = true;
-
-        // Generate Snap Token
-        $params = [
-            'transaction_details' => [
-                'order_id' => $booking->order_id,
-                'gross_amount' => $booking->total_harga,
-            ],
-            'customer_details' => [
-                'first_name' => Auth::user()->name,
-                'email' => Auth::user()->email,
-            ],
-            'callbacks' => [
-                'finish' => route('payment.finish', ['booking' => $booking->id])
-            ]
-        ];
-
         try {
-            $snapToken = Snap::getSnapToken($params);
-            Log::info('Snap token generated for booking: ' . $booking->order_id);
-        } catch (\Exception $e) {
-            Log::error('Error generating snap token: ' . $e->getMessage());
-            return redirect()->route('home')->with('error', 'Gagal membuat pembayaran. Silakan coba lagi.');
-        }
+            // Cari booking yang sedang pending untuk user ini dengan vet yang sama
+            $booking = Booking::where('user_id', Auth::id())
+                ->where('vet_id', $vet->id)
+                ->where('status_bayar', 'pending')
+                ->latest()
+                ->first();
 
-        return view('payment-midtrans', compact('vet', 'snapToken', 'booking'));
+            if (!$booking) {
+                Log::warning('No pending booking found', [
+                    'user_id' => Auth::id(),
+                    'vet_id' => $vet->id
+                ]);
+                return redirect()->route('home')->with('error', 'Booking tidak ditemukan atau sudah diproses');
+            }
+
+            // Cek apakah booking sudah expired (lebih dari 30 menit)
+            if ($booking->created_at->diffInMinutes(now()) > 30) {
+                $booking->update([
+                    'status' => 'canceled',
+                    'status_bayar' => 'gagal'
+                ]);
+
+                return redirect()->route('home')->with('error', 'Booking telah expired. Silakan buat booking baru.');
+            }
+
+            // Generate Snap Token
+            $snapToken = $this->generateSnapToken($booking, $vet);
+
+            if (!$snapToken) {
+                return redirect()->back()->with('error', 'Gagal membuat token pembayaran');
+            }
+
+            return view('payment.confirm', compact('vet', 'booking', 'snapToken'));
+
+        } catch (\Exception $e) {
+            Log::error('Payment page error', [
+                'error' => $e->getMessage(),
+                'vet_id' => $vet->id,
+                'user_id' => Auth::id()
+            ]);
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem');
+        }
     }
 
     public function paymentFinish(Booking $booking)
     {
-        session()->forget('booking_data');
+        try {
+            // Pastikan booking milik user yang login
+            if ($booking->user_id !== Auth::id()) {
+                abort(403, 'Unauthorized access');
+            }
 
-        return view('payment-finish', compact('booking'));
+            // Refresh data booking dari database untuk mendapatkan status terbaru
+            $booking->refresh();
+
+            // Load relasi yang diperlukan
+            $booking->load(['vet', 'vetDate', 'vetTime', 'user']);
+
+            return view('payment.success', compact('booking'));
+
+        } catch (\Exception $e) {
+            Log::error('Payment finish error', [
+                'error' => $e->getMessage(),
+                'booking_id' => $booking->id,
+                'user_id' => Auth::id()
+            ]);
+
+            return redirect()->route('home')->with('error', 'Terjadi kesalahan sistem');
+        }
     }
 
     public function create(Booking $booking)
@@ -237,4 +299,73 @@ public function store(Request $request)
         ]);
     }
 
+    private function generateSnapToken(Booking $booking, Vet $vet)
+    {
+        try {
+            // Set Midtrans configuration
+            \Midtrans\Config::$serverKey = config('midtrans.serverkey');
+            \Midtrans\Config::$isProduction = config('midtrans.is_production');
+            \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized');
+            \Midtrans\Config::$is3ds = config('midtrans.is_3ds');
+
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $booking->order_id,
+                    'gross_amount' => $booking->total_harga,
+                ],
+                'customer_details' => [
+                    'first_name' => $booking->user->name,
+                    'email' => $booking->user->email,
+                    'phone' => $booking->user->phone ?? '',
+                ],
+                'item_details' => [
+                    [
+                        'id' => 'consultation_' . $vet->id,
+                        'price' => $vet->harga,
+                        'quantity' => 1,
+                        'name' => 'Konsultasi dengan ' . $vet->nama,
+                    ],
+                    [
+                        'id' => 'admin_fee',
+                        'price' => 5000,
+                        'quantity' => 1,
+                        'name' => 'Biaya Admin',
+                    ]
+                ],
+                'callbacks' => [
+                    'finish' => route('payment.finish', ['booking' => $booking->id])
+                ],
+                // Tambahan konfigurasi
+                'credit_card' => [
+                    'secure' => true
+                ],
+                'expiry' => [
+                    'start_time' => date("Y-m-d H:i:s O"),
+                    'unit' => 'minutes',
+                    'duration' => 30
+                ]
+            ];
+
+            // Generate Snap Token
+            $snapToken = \Midtrans\Snap::getSnapToken($params);
+
+            Log::info('Snap token generated', [
+                'order_id' => $booking->order_id,
+                'booking_id' => $booking->id,
+                'gross_amount' => $booking->total_harga
+            ]);
+
+            return $snapToken;
+
+        } catch (\Exception $e) {
+            Log::error('Failed to generate snap token', [
+                'error' => $e->getMessage(),
+                'booking_id' => $booking->id,
+                'order_id' => $booking->order_id,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return null;
+        }
+    }
 }
