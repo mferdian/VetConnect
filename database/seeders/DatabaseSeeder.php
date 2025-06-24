@@ -56,5 +56,7 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('birra123'),
             'is_admin' => false,
         ]);
+
+        Article::factory(20)->create();
     }
 }
