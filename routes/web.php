@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\BookingWebhookController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NavigationController;
@@ -13,9 +14,23 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 // ==============================
+// WEBHOOK ROUTES (Prioritas tinggi, tanpa middleware)
+// ==============================
+Route::prefix('api/webhook')->group(function () {
+    // Booking webhooks
+    Route::post('/booking/create', [BookingWebhookController::class, 'handleBookingWebhook'])
+        ->name('webhook.booking.create');
+    Route::post('/booking/update-status', [BookingWebhookController::class, 'updateBookingStatus'])
+        ->name('webhook.booking.update-status');
+
+    // Midtrans webhook (jika ada)
+    Route::post('/midtrans/notification', [MidtransWebhookController::class, 'handle'])
+        ->name('webhook.midtrans.notification');
+});
+
+// ==============================
 // GUEST ROUTES
 // ==============================
-
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
@@ -26,47 +41,54 @@ Route::middleware('guest')->group(function () {
 // ==============================
 // AUTHENTICATED USER ROUTES
 // ==============================
-
 Route::middleware('auth')->group(function () {
+    // Authentication
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('/delete-account', [AuthController::class, 'deleteAccount'])->name('delete-account');
 
-    // Profile
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
-    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Profile Management
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [ProfileController::class, 'show'])->name('show');
+        Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
+        Route::put('/update', [ProfileController::class, 'update'])->name('update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
+    });
 
     // Booking & Payment
-    Route::get('/booking/{id}', [BookingController::class, 'bookingDetail'])->name('booking.show');
-    Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
+    Route::prefix('booking')->name('booking.')->group(function () {
+        Route::get('/{id}', [BookingController::class, 'bookingDetail'])->name('show');
+        Route::post('/store', [BookingController::class, 'store'])->name('store');
+        Route::get('/get-times/{vetDateId}', [BookingController::class, 'getTimes'])->name('getTimes');
+    });
+
     Route::get('/payment/{vet}', [BookingController::class, 'show'])->name('payment.page');
+    Route::get('/payment/finish/{booking}', [BookingController::class, 'paymentFinish'])->name('payment.finish');
 
     // Transaction History
     Route::get('/history', [BookingController::class, 'history'])->name('history');
     Route::get('/my-orders', [NavigationController::class, 'myorder'])->name('myorder.index');
 
-    // Article
+    // Articles (authenticated access)
     Route::get('/articles/{id}', [ArticleController::class, 'show'])->name('articles.show');
 
-    // Review Routes
-    Route::middleware(['review'])->group(function () {
-        Route::get('/review/create/{booking}', [ReviewController::class, 'create'])->name('review.create');
+    // Review Management
+    Route::prefix('review')->name('review.')->group(function () {
+        Route::middleware(['review'])->group(function () {
+            Route::get('/create/{booking}', [ReviewController::class, 'create'])->name('create');
+        });
+        Route::post('/store', [ReviewController::class, 'store'])->name('store');
     });
-    Route::post('/review/store', [ReviewController::class, 'store'])->name('review.store');
-
-
 });
 
 // ==============================
-// GENERAL PUBLIC PAGES
+// PUBLIC PAGES (No authentication required)
 // ==============================
-
 Route::get('/', [NavigationController::class, 'home'])->name('home');
 Route::get('/doctor', [NavigationController::class, 'doctors'])->name('doctor');
 Route::get('/articles', [ArticleController::class, 'index'])->name('articles');
 Route::get('/aplication', [NavigationController::class, 'aplication'])->name('aplication');
 Route::get('/detailArticle', [NavigationController::class, 'detailArticle'])->name('detailArticle');
-Route::get('/booking/get-times/{vetDateId}', [BookingController::class, 'getTimes'])->name('booking.getTimes');
-// Route::post('/midtrans/webhook', [MidtransWebhookController::class, 'handle'])->name('midtrans.webhook');
-Route::get('/payment/finish/{booking}', [BookingController::class, 'paymentFinish'])->name('payment.finish');
+
+// Public AJAX endpoints (bisa diakses tanpa auth jika diperlukan)
+Route::get('/booking/get-times/{vetDateId}', [BookingController::class, 'getTimes'])
+    ->name('public.booking.getTimes');

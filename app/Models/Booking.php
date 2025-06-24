@@ -38,6 +38,13 @@ class Booking extends Model
     }
 
 
+    protected $casts = [
+        'total_harga' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime'
+    ];
+
+    // Relationships
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -56,6 +63,33 @@ class Booking extends Model
     public function vetTime(): BelongsTo
     {
         return $this->belongsTo(VetTime::class);
+    }
+
+    // Scopes
+    public function scopeConfirmed($query)
+    {
+        return $query->where('status', 'confirmed');
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
+    }
+
+    public function scopeCanceled($query)
+    {
+        return $query->where('status', 'canceled');
+    }
+
+    public function scopePaidSuccessfully($query)
+    {
+        return $query->where('status_bayar', 'berhasil');
+    }
+
+    // Accessor untuk format currency
+    public function getFormattedTotalHargaAttribute()
+    {
+        return 'Rp ' . number_format($this->total_harga, 0, ',', '.');
     }
 
     public function review(): HasOne
