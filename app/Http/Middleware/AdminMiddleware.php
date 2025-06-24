@@ -12,8 +12,6 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $guard = config('filament.auth.guard', 'web');
-
-        // Lewatkan middleware jika sedang mengakses halaman login
         if ($request->routeIs('filament.admin.auth.login')) {
             return $next($request);
         }
