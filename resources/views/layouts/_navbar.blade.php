@@ -233,6 +233,24 @@
                         <div class="text-xs text-gray-500">{{ Auth::user()->email }}</div>
                     </div>
                 </div>
+
+                <div class="space-y-2">
+                    @auth
+                        <a href="{{ route('profile') }}" class="block py-2 text-sm text-gray-700 hover:text-emerald-600">My
+                            Profile</a>
+                        <a href="{{ route('profile.edit') }}"
+                            class="block py-2 text-sm text-gray-700 hover:text-emerald-600">Edit Profile</a>
+                        <a href="{{ route('myorder.index') }}"
+                            class="block py-2 text-sm text-gray-700 hover:text-emerald-600">My Orders</a>
+                        <a href="{{ route('history') }}"
+                            class="block py-2 text-sm text-gray-700 hover:text-emerald-600">History</a>
+
+                        <form method="POST" action="{{ route('logout') }}" class="pt-2 border-t border-gray-200">
+                            @csrf
+                            <button type="submit" class="block w-full py-2 text-sm text-left text-red-600">Sign Out</button>
+                        </form>
+                    @endauth
+                </div>
             </div>
         @endauth
     </div>
