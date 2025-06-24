@@ -68,21 +68,5 @@ Route::get('/articles', [ArticleController::class, 'index'])->name('articles');
 Route::get('/aplication', [NavigationController::class, 'aplication'])->name('aplication');
 Route::get('/detailArticle', [NavigationController::class, 'detailArticle'])->name('detailArticle');
 Route::get('/booking/get-times/{vetDateId}', [BookingController::class, 'getTimes'])->name('booking.getTimes');
-Route::post('/midtrans/webhook', [MidtransWebhookController::class, 'handle'])->name('midtrans.webhook');
+// Route::post('/midtrans/webhook', [MidtransWebhookController::class, 'handle'])->name('midtrans.webhook');
 Route::get('/payment/finish/{booking}', [BookingController::class, 'paymentFinish'])->name('payment.finish');
-
-
-Route::any('/midtrans/test', function(HttpRequest $request) {
-    Log::info('Midtrans test endpoint hit', [
-        'method' => $request->method(),
-        'headers' => $request->headers->all(),
-        'body' => $request->all()
-    ]);
-
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Endpoint accessible',
-        'method' => $request->method(),
-        'timestamp' => now()
-    ], 200);
-});

@@ -5,146 +5,94 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Booking;
-use Midtrans\Config;
-use Midtrans\Notification;
 
 class MidtransWebhookController extends Controller
 {
     public function handle(Request $request)
     {
-        // Log semua request yang masuk untuk debugging
+        $data = $request->all();
+
+        // Log semua data request yang diterima
         Log::info('Midtrans webhook received', [
-            'method' => $request->method(),
-            'headers' => $request->headers->all(),
-            'body' => $request->all(),
-            'raw_body' => $request->getContent()
+            'data' => $data,
         ]);
 
-        // Jika tidak ada data, kembalikan response sukses
-        if (empty($request->all()) && empty($request->getContent())) {
-            Log::info('Empty webhook request - returning success for test');
-            return response()->json(['status' => 'success'], 200);
+        // Ambil data penting dari request
+        $orderId = $data['order_id'] ?? null;
+        $transactionStatus = $data['transaction_status'] ?? null;
+        $fraudStatus = $data['fraud_status'] ?? null;
+
+        // Validasi awal
+        if (!$orderId || !$transactionStatus) {
+            Log::warning("Invalid Midtrans webhook data", $data);
+            return response()->json(['status' => 'error', 'message' => 'Invalid payload'], 400);
         }
 
-        try {
-            // Setup Midtrans Config
-            Config::$serverKey = config('midtrans.serverKey');
-            Config::$isProduction = config('midtrans.isProduction');
-            Config::$isSanitized = true;
-            Config::$is3ds = true;
+        // Cari booking berdasarkan order_id
+        $booking = Booking::where('order_id', $orderId)->first();
 
-            // Buat instance notification
-            $notification = new Notification();
-
-            // Ambil data dari notification
-            $orderId = $notification->order_id;
-            $transactionStatus = $notification->transaction_status;
-            $fraudStatus = $notification->fraud_status ?? null;
-            $paymentType = $notification->payment_type;
-            $grossAmount = $notification->gross_amount;
-
-            // Log untuk debugging
-            Log::info('Midtrans Webhook Received', [
-                'order_id' => $orderId,
-                'transaction_status' => $transactionStatus,
-                'fraud_status' => $fraudStatus,
-                'payment_type' => $paymentType,
-                'gross_amount' => $grossAmount
-            ]);
-
-            // Cari booking berdasarkan order_id
-            $booking = Booking::where('order_id', $orderId)->first();
-
-            if (!$booking) {
-                Log::warning('Booking not found for order_id: ' . $orderId);
-                return response()->json(['status' => 'error', 'message' => 'Booking not found'], 404);
-            }
-
-            // Update status berdasarkan transaction_status
-            $this->updateBookingStatus($booking, $transactionStatus, $fraudStatus);
-
-            return response()->json(['status' => 'success']);
-
-        } catch (\Exception $e) {
-            Log::error('Midtrans Webhook Error: ' . $e->getMessage(), [
-                'request_data' => $request->all(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        if (!$booking) {
+            Log::warning('Booking not found: ' . $orderId);
+            return response()->json(['status' => 'error', 'message' => 'Booking not found'], 404);
         }
+
+        // Update status booking
+        $this->updateBookingStatus($booking, $transactionStatus, $fraudStatus);
+
+        return response()->json(['status' => 'success'], 200);
     }
 
-    private function updateBookingStatus($booking, $transactionStatus, $fraudStatus = null)
+    private function updateBookingStatus(Booking $booking, string $transactionStatus, ?string $fraudStatus = null)
     {
+        $statusUpdate = [];
+
         switch ($transactionStatus) {
             case 'capture':
-                if ($fraudStatus == 'challenge') {
-                    // Transaksi challenge, tunggu approval manual
-                    $booking->update([
+                if ($fraudStatus === 'challenge') {
+                    $statusUpdate = [
                         'status' => 'pending',
-                        'status_bayar' => 'pending'
-                    ]);
-                    Log::info("Booking {$booking->order_id} status: challenge");
-                } elseif ($fraudStatus == 'accept') {
-                    // Transaksi berhasil
-                    $booking->update([
+                        'status_bayar' => 'pending',
+                    ];
+                } elseif ($fraudStatus === 'accept') {
+                    $statusUpdate = [
                         'status' => 'confirmed',
-                        'status_bayar' => 'berhasil'
-                    ]);
-                    Log::info("Booking {$booking->order_id} status: capture accepted");
+                        'status_bayar' => 'berhasil',
+                    ];
                 }
                 break;
 
             case 'settlement':
-                // Transaksi berhasil
-                $booking->update([
+                $statusUpdate = [
                     'status' => 'confirmed',
-                    'status_bayar' => 'berhasil'
-                ]);
-                Log::info("Booking {$booking->order_id} status: settlement");
+                    'status_bayar' => 'berhasil',
+                ];
                 break;
 
             case 'pending':
-                // Transaksi masih pending
-                $booking->update([
+                $statusUpdate = [
                     'status' => 'pending',
-                    'status_bayar' => 'pending'
-                ]);
-                Log::info("Booking {$booking->order_id} status: pending");
+                    'status_bayar' => 'pending',
+                ];
                 break;
 
             case 'deny':
-                // Transaksi ditolak
-                $booking->update([
-                    'status' => 'canceled',
-                    'status_bayar' => 'gagal'
-                ]);
-                Log::info("Booking {$booking->order_id} status: denied");
-                break;
-
             case 'cancel':
             case 'expire':
-                // Transaksi dibatalkan atau expired
-                $booking->update([
-                    'status' => 'canceled',
-                    'status_bayar' => 'gagal'
-                ]);
-                Log::info("Booking {$booking->order_id} status: {$transactionStatus}");
-                break;
-
             case 'failure':
-                // Transaksi gagal
-                $booking->update([
+                $statusUpdate = [
                     'status' => 'canceled',
-                    'status_bayar' => 'gagal'
-                ]);
-                Log::info("Booking {$booking->order_id} status: failure");
+                    'status_bayar' => 'gagal',
+                ];
                 break;
 
             default:
                 Log::warning("Unknown transaction status: {$transactionStatus} for booking {$booking->order_id}");
-                break;
+                return;
+        }
+
+        if (!empty($statusUpdate)) {
+            $booking->update($statusUpdate);
+            Log::info("Booking {$booking->order_id} updated", $statusUpdate);
         }
     }
 }
